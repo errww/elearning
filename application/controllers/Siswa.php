@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  
-class Kelas extends CI_Controller
+class Siswa extends CI_Controller
 {
 
 
@@ -9,43 +9,44 @@ class Kelas extends CI_Controller
         parent::__construct();
 		$this->load->library('session');
 		$this->load->helper('html');
-        $this->load->model('private/kelas_model');
+        $this->load->model('private/siswa_model');
           
      }
 
 
 
-        public function kelas_add()
+        public function siswa_add()
         {
             $data = array(
-                    'nama_kelas' => $this->input->post('nama_kelas'),
+                    'nis_siswa' => $this->input->post('nis_siswa'),
+                    'nama_siswa' => $this->input->post('nama_siswa'),
                 );
-            $insert = $this->kelas_model->kelas_add($data);
+            $insert = $this->siswa_model->siswa_add($data);
             echo json_encode(array("status" => TRUE));
         }
 
 
         public function ajax_edit($id)
         {  
-            $data = $this->kelas_model->get_by_id($id);
+            $data = $this->siswa_model->get_by_id($id);
  
             echo json_encode($data);
         }
 
-        public function kelas_update()
+        public function siswa_update()
         {
         $data = array(
-                'nama_kelas' => $this->input->post('nama_kelas'),
+                'nama_siswa' => $this->input->post('nama_siswa'),
             );
-        $this->kelas_model->kelas_update(array('id_kelas' => $this->input->post('id_kelas')), $data);
+        $this->siswa_model->siswa_update(array('nis_siswa' => $this->input->post('nis_siswa_edit')), $data);
         echo json_encode(array("status" => TRUE));
         }
 
 
-        public function kelas_delete($id)
+        public function siswa_delete($id)
         {
        
-        $this->kelas_model->delete_by_id($id);
+        $this->siswa_model->delete_by_nis($id);
         echo json_encode(array("status" => TRUE));
         }
 

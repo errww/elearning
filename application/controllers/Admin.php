@@ -21,11 +21,6 @@ class Admin extends CI_Controller
                $this->load->view('layout/header/private/header');
                $this->load->view('content/private/main',$data);
                $this->load->view('layout/footer/private/footer');
-
-               
-      
-             
-
      }
 
 
@@ -38,11 +33,17 @@ class Admin extends CI_Controller
                $this->load->view('layout/header/private/header');
                $this->load->view('content/private/main',$data);
                $this->load->view('layout/footer/private/footer');
+     }
 
-               
-      
-             
-
+     public function siswa()
+     {          
+               $this->load->model('private/siswa_model');
+               $this->cek_session();
+               $data['content']='content/private/siswa';
+               $data['siswa']=$this->siswa_model->get_all_siswa();
+               $this->load->view('layout/header/private/header');
+               $this->load->view('content/private/main',$data);
+               $this->load->view('layout/footer/private/footer');
      }
 
 
@@ -72,8 +73,8 @@ class Admin extends CI_Controller
                     if ($usr_result > 0) //active user record is present
                     {
                          $sessiondata = array(
-                              'nik'         => $usr_result['nik'],
-                              'password'    => $usr_result['password'],
+                              'nis_siswa'         => $usr_result['nis_siswa'],
+                              'password'          => $usr_result['password'],
                          );
                          $this->session->set_userdata($sessiondata);
                         
@@ -131,9 +132,16 @@ class Admin extends CI_Controller
 
      function cek_session() {
 
-        if (!isset($this->session->userdata['nik'])) {
+        if (!isset($this->session->userdata['nis_siswa'])) {
             return  redirect("admin/login");
             }
+
+     }
+
+     function logout() {
+
+      $this->session->sess_destroy();
+        redirect('admin/login');
 
      }
 

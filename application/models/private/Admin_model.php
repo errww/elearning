@@ -16,10 +16,10 @@ class Admin_model extends CI_Model
           
 		  $this->db->select('*');
 			$this->db->from('siswa');
-        	$this->db->where('nik',$usr);
+        	$this->db->where('nis_siswa',$usr);
 			  $this->db->where('password',md5($pwd));      
             $query = $this->db->get(); 
-			//echo $this->db->last_query();
+			echo $this->db->last_query();
             if($query->num_rows() != 0)
             {
                 return $query->row_array();
