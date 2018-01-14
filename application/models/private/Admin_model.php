@@ -9,16 +9,19 @@ class Admin_model extends CI_Model
           $this->load->database();
      }
 
+     public function add_admin($data)
+     {
+        $this->db->insert('admin' ,$data);
+     }
+
      //get the username & password from tbl_usrs
      function get_user($usr, $pwd)
-     {
-          
-          
+     {       
 		  $this->db->select('*');
-			$this->db->from('siswa');
-        	$this->db->where('nis_siswa',$usr);
-			  $this->db->where('password',md5($pwd));      
-            $query = $this->db->get(); 
+			$this->db->from('admin');
+      $this->db->where('id',$usr);
+		  $this->db->where('password',($pwd));      
+      $query = $this->db->get(); 
 			echo $this->db->last_query();
             if($query->num_rows() != 0)
             {
@@ -28,18 +31,34 @@ class Admin_model extends CI_Model
             {
                 return false;
             }
-		  
      }
+
+    function loginMe($username, $password)
+    {
+        $this->db->select('*');
+        $this->db->from('admin');
+        $this->db->where('username', $username);
+        $query = $this->db->get();
+            
+        $user = $query->result();
+            
+        if(!empty($user)){
+            if(verifyHashedPassword($password, $user[0]->password)){
+                return $user;
+            } else {
+                return array();
+            }
+        } else {
+            return array();
+        }
+    }
 	 
-
-
     public function get_all_books()
     {   
         $this->db->from('books');
         $query=$this->db->get();
         return $query->result();
     }
- 
  
     public function get_by_id($id)
     {   $this->db->select('*');
@@ -67,10 +86,4 @@ class Admin_model extends CI_Model
         $this->db->where('book_id', $id);
         $this->db->delete('books');
     }
- 
-
-
-
-
-	 
 }?>

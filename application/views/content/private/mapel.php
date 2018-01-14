@@ -1,14 +1,14 @@
 
-    <center><h3>Data Kelas</h3></center>
+    <center><h3>Data Mata Pelajaran</h3></center>
     <br />
-    <button class="btn btn-success" onclick="add_kelas()"><i class="glyphicon glyphicon-plus"></i> Add Kelas</button>
+    <button class="btn btn-success" onclick="add()"><i class="glyphicon glyphicon-plus"></i> Add Mata Pelajaran</button>
     <br />
     <br />
     <table id="table_id" class="table table-striped table-bordered" cellspacing="0" width="100%">
       <thead>
         <tr>
-                    <th>ID Kelas</th>
-                    <th>Nama Kelas</th>
+                    <th>ID Mata Pelajaran</th>
+                    <th>Nama Mata Pelajaran</th>
 
  
           <th style="width:125px;">Action
@@ -16,13 +16,13 @@
         </tr>
       </thead>
       <tbody>
-                <?php foreach($kelas as $kelass){?>
+                <?php foreach($mapel as $mapels){?>
                      <tr>
-                         <td><?php echo $kelass->id_kelas;?></td>
-                         <td><?php echo $kelass->nama_kelas;?></td>
+                         <td><?php echo $mapels->id;?></td>
+                         <td><?php echo $mapels->mapel;?></td>
                                 <td>
-                                    <button class="btn btn-warning" onclick="edit_kelas(<?php echo $kelass->id_kelas;?>)"><i class="glyphicon glyphicon-pencil"></i></button>
-                                    <button class="btn btn-danger" onclick="delete_kelas(<?php echo $kelass->id_kelas;?>)"><i class="glyphicon glyphicon-remove"></i></button>
+                                    <button class="btn btn-warning" onclick="edit(<?php echo $mapels->id;?>)"><i class="glyphicon glyphicon-pencil"></i></button>
+                                    <button class="btn btn-danger" onclick="destroy(<?php echo $mapels->id;?>)"><i class="glyphicon glyphicon-remove"></i></button>
  
  
                                 </td>
@@ -35,8 +35,8 @@
  
       <tfoot>
         <tr>
-          <th>ID Kelas</th>
-          <th>Nama Kelas</th>
+          <th>ID Mata Pelajaran</th>
+          <th>Nama Mata Pelajaran</th>
           <th>Action</th>
         </tr>
       </tfoot>
@@ -44,7 +44,7 @@
  
 
 
-  <script src="https://cdn.ckeditor.com/4.7.3/standard/ckeditor.js"></script>
+
   <script type="text/javascript">
   $(document).ready( function () {
       $('#table_id').DataTable();
@@ -53,7 +53,7 @@
     var table;
  
  
-    function add_kelas()
+    function add()
     {
       save_method = 'add';
       $('#form')[0].reset(); // reset form on modals
@@ -61,26 +61,23 @@
     //$('.modal-title').text('Add Person'); // Set Title to Bootstrap modal title
     }
  
-    function edit_kelas(id)
+    function edit(id)
     {
       save_method = 'update';
       $('#form')[0].reset(); // reset form on modals
  
       //Ajax Load data from ajax
       $.ajax({
-        url : "<?php echo site_url('index.php/admin/ajax_kelas_edit/')?>/" + id,
+        url : "<?php echo site_url('index.php/admin/ajax_mapel_edit/')?>/" + id,
         type: "GET",
         dataType: "JSON",
         success: function(data)
         {
-            $('[name="id_kelas"]').val(data.id_kelas);
-            $('[name="nama_kelas"]').val(data.nama_kelas);
-            CKEDITOR.instances.txt1.setData(data.jadwal);
-            //alert(data.jadwal);
+            $('[name="id_mapel"]').val(data.id);
+            $('[name="nama_mapel"]').val(data.mapel);
  
             $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
-            $('.modal-title').text('Edit Kelas'); // Set title to Bootstrap modal title
- 
+            $('.modal-title').text('Edit Mata Pelajaran'); // Set title to Bootstrap modal title
         },
         error: function (jqXHR, textStatus, errorThrown)
         {
@@ -89,22 +86,16 @@
     });
     }
  
- 
- 
     function save()
     {
-      for (instance in CKEDITOR.instances) {
-                CKEDITOR.instances[instance].updateElement();
-            }
-
       var url;
       if(save_method == 'add')
       {
-          url = "<?php echo site_url('index.php/admin/kelas_add')?>";
+          url = "<?php echo site_url('index.php/admin/mapel_add')?>";
       }
       else
       {
-        url = "<?php echo site_url('index.php/admin/kelas_update')?>";
+        url = "<?php echo site_url('index.php/admin/mapel_update')?>";
       }
  
        // ajax adding data to database
@@ -126,13 +117,13 @@
         });
     }
  
-    function delete_kelas(id)
+    function destroy(id)
     {
       if(confirm('Are you sure delete this data?'))
       {
         // ajax delete data from database
           $.ajax({
-            url : "<?php echo site_url('index.php/admin/kelas_delete')?>/"+id,
+            url : "<?php echo site_url('index.php/admin/mapel_delete')?>/"+id,
             type: "POST",
             dataType: "JSON",
             success: function(data)
@@ -150,8 +141,6 @@
     }
  
   </script>
- 
-
 
   <!-- Bootstrap modal -->
   <div class="modal fade" id="modal_form" role="dialog">
@@ -159,24 +148,19 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h3 class="modal-title">Kelas Form</h3>
+        <h3 class="modal-title">Mata Pelajaran Form</h3>
       </div>
       <div class="modal-body form">
         <form action="#" id="form" class="form-horizontal">
-          <input type="hidden" value="" name="id_kelas"/>
+          <input type="hidden" value="" name="id_mapel"/>
           <div class="form-body">
             
             <div class="form-group">
-              <label class="control-label col-md-3">Nama Kelas</label>
+              <label class="control-label col-md-3">Mata Pelajaran</label>
               <div class="col-md-9">
-                <input name="nama_kelas" placeholder="Nama Kelas" class="form-control" type="text">
+                <input name="nama_mapel" placeholder="Nama Mata Pelajaran" class="form-control" type="text">
               </div>
             </div>
-
-              <textarea name="txt1" id="txt1" class="form-control" type="text"></textarea>
-              <script>
-                CKEDITOR.replace( 'txt1' );
-              </script>
             
           </div>
         </form>

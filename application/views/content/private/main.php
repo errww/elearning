@@ -9,7 +9,15 @@
     <div class="row">
 
         <div class="col-sm-3 col-md-3">
-        <?php $this->load->view('content/private/nav'); ?>    
+        <?php
+	        if(empty($navigation)){
+	        	$this->load->view('content/private/nav');
+	        }elseif($navigation == 'guru'){
+	        	$this->load->view('content/private/navguru');
+	        }elseif($navigation == 'siswa'){
+                $this->load->view('content/private/navsiswa');
+            }
+	        ?>    
         </div>
 
         <div class="col-sm-9 col-md-9">    

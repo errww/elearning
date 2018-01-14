@@ -1,2 +1,5 @@
-Login      : http://localhost/sekolah/admin/login
-Siswa CRUD : http://localhost/sekolah/admin/kelas
+Login Admin/Guru : http://localhost/sekolah/admin/login
+admin = username : 1 pass : 1
+guru = nik : 123 pass : 123
+
+Login Siswa : http://localhost/sekolah/siswa/login

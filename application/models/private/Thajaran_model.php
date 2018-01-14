@@ -2,7 +2,7 @@
     exit('No direct script access allowed');
 }
 
-class Kelas_model extends CI_Model
+class Thajaran_model extends CI_Model
 {
     public function __construct()
     {
@@ -11,9 +11,9 @@ class Kelas_model extends CI_Model
         $this->load->database();
     }
 
-    public function get_all_kelas()
+    public function get_all_thajaran()
     {
-        $this->db->from('kelas');
+        $this->db->from('thajaran');
         $query = $this->db->get();
         return $query->result();
     }
@@ -21,39 +21,29 @@ class Kelas_model extends CI_Model
     public function get_by_id($id)
     {
         $this->db->select('*');
-        $this->db->from('kelas');
-        $this->db->where('id_kelas', $id);
+        $this->db->from('thajaran');
+        $this->db->where('id', $id);
         $query = $this->db->get();
         //echo $this->db->last_query();
         return $query->row();
     }
 
-    public function get_select($id, $select)
+    public function thajaran_add($data)
     {
-        $this->db->select($select);
-        $this->db->where('id', $id);
-        $query = $this->db->get('guru');
-        return $query->row()->$select;
-    }
-
-    public function kelas_add($data)
-    {
-        $this->db->insert('kelas', $data);
+        $this->db->insert('thajaran', $data);
         return $this->db->insert_id();
     }
 
-    public function kelas_update($where, $data)
+    public function thajaran_update($where, $data)
     {
-        $this->db->update('kelas', $data, $where);
-
+        $this->db->update('thajaran', $data, $where);
         return $this->db->affected_rows();
-
     }
 
     public function delete_by_id($id)
     {
-        $this->db->where('id_kelas', $id);
-        $this->db->delete('kelas');
+        $this->db->where('id', $id);
+        $this->db->delete('thajaran');
     }
 
 }

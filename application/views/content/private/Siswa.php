@@ -9,8 +9,8 @@
         <tr>
                     <th>NIS Siswa</th>
                     <th>Nama Siswa</th>
-
- 
+                    <th>Kelas</th>
+                    <th>Thajaran</th> 
           <th style="width:125px;">Action
           </p></th>
         </tr>
@@ -20,9 +20,11 @@
                      <tr>
                          <td><?php echo $siswas->nis_siswa;?></td>
                          <td><?php echo $siswas->nama_siswa;?></td>
+                         <td><?php echo $siswas->nama_kelas;?></td>
+                         <td><?php echo $siswas->thajaran;?></td>
                                 <td>
-                                    <button class="btn btn-warning" onclick="edit_siswa(<?php echo $siswas->nis_siswa;?>)"><i class="glyphicon glyphicon-pencil"></i></button>
-                                    <button class="btn btn-danger" onclick="delete_siswa(<?php echo $siswas->nis_siswa;?>)"><i class="glyphicon glyphicon-remove"></i></button>
+                                    <button class="btn btn-warning" onclick="edit_siswa(<?php echo $siswas->id_siswa;?>)"><i class="glyphicon glyphicon-pencil"></i></button>
+                                    <button class="btn btn-danger" onclick="delete_siswa(<?php echo $siswas->id_siswa;?>)"><i class="glyphicon glyphicon-remove"></i></button>
  
  
                                 </td>
@@ -37,6 +39,8 @@
         <tr>
           <th>Nis Siswa</th>
           <th>Nama Siswa</th>
+          <th>Kelas</th>
+          <th>Thajaran</th>
           <th>Action</th>
         </tr>
       </tfoot>
@@ -68,16 +72,17 @@
  
       //Ajax Load data from ajax
       $.ajax({
-        url : "<?php echo site_url('index.php/siswa/ajax_edit/')?>/" + id,
+        url : "<?php echo site_url('index.php/admin/ajax_siswa_edit/')?>/" + id,
         type: "GET",
         dataType: "JSON",
         success: function(data)
-        {
+        { 
+            $('[name="id_siswa_edit"]').val(data.id_siswa);
             $('[name="nis_siswa_edit"]').val(data.nis_siswa);
             $('[name="nis_siswa"]').val(data.nis_siswa);
             $('[name="nama_siswa"]').val(data.nama_siswa);
  
-            $('[name="nis_siswa"]').attr('disabled','disabled');
+            //$('[name="nis_siswa"]').attr('disabled','disabled');
             $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
             $('.modal-title').text('Edit Siswa'); // Set title to Bootstrap modal title
  
@@ -96,11 +101,11 @@
       var url;
       if(save_method == 'add')
       {
-          url = "<?php echo site_url('index.php/siswa/siswa_add')?>";
+          url = "<?php echo site_url('index.php/admin/siswa_add')?>";
       }
       else
       {
-        url = "<?php echo site_url('index.php/siswa/siswa_update')?>";
+        url = "<?php echo site_url('index.php/admin/siswa_update')?>";
       }
  
        // ajax adding data to database
@@ -128,7 +133,7 @@
       {
         // ajax delete data from database
           $.ajax({
-            url : "<?php echo site_url('index.php/siswa/siswa_delete')?>/"+id,
+            url : "<?php echo site_url('index.php/admin/siswa_delete')?>/"+id,
             type: "POST",
             dataType: "JSON",
             success: function(data)
@@ -159,7 +164,7 @@
       </div>
       <div class="modal-body form">
         <form action="#" id="form" class="form-horizontal">
-          
+          <input type="hidden" value="" name="id_siswa_edit"/>
           <div class="form-body">
             
             <div class="form-group">
@@ -176,6 +181,35 @@
                 <input name="nama_siswa" placeholder="Nama Siswa" class="form-control" type="text">
               </div>
             </div>
+
+            <div class="form-group">
+              <label class="control-label col-md-3">Password Siswa</label>
+              <div class="col-md-9">
+                <input name="pass_siswa" placeholder="Password Siswa" class="form-control" type="password">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="control-label col-md-3">Kelas Siswa</label>
+              <div class="col-md-9">
+                 <select name="kelas_siswa" class="form-control">
+                    <?php foreach($kelas as $row):?>
+                     <option value="<?php echo $row->id_kelas ?>"><?php echo $row->nama_kelas ?></option>
+                    <?php endforeach;?>
+                  </select> 
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="control-label col-md-3">Tahun Ajaran</label>
+              <div class="col-md-9">
+                 <select name="th_siswa" class="form-control">
+                    <?php foreach($thajaran as $row):?>
+                     <option value="<?php echo $row->id ?>"><?php echo $row->thajaran ?></option>
+                    <?php endforeach;?>
+                  </select> 
+              </div>
+            </div>
             
           </div>
         </form>
@@ -188,4 +222,3 @@
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
   <!-- End Bootstrap modal -->
- 

@@ -3,6 +3,25 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThajaran"><i class="fa fa-building"></i> Tahun Ajaran</a>
+                        </h4>
+                    </div>
+                    <div id="collapseThajaran" class="panel-collapse collapse <?php if ($this->uri->segment(2) =='thajaran') { echo 'in'; }?>">
+                        <div class="panel-body">
+                            <table class="table">
+                                <tr>
+                                    <td>
+                                        <a href="<?php echo base_url('admin/thajaran')?>">Data Tahun Ajaran</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
                             <a data-toggle="collapse" data-parent="#accordion" href="#collapseKelas"><i class="fa fa-building"></i> Kelas</a>
                         </h4>
                     </div>
@@ -19,6 +38,43 @@
                     </div>
                 </div>
 
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseGuru"><i class="fa fa-users"></i> Guru</a>
+                        </h4>
+                    </div>
+                    <div id="collapseGuru" class="panel-collapse collapse <?php if ($this->uri->segment(2) =='guru') { echo 'in'; }?>">
+                        <div class="panel-body">
+                            <table class="table">
+                                <tr>
+                                    <td>
+                                        <a href="<?php echo base_url('admin/guru')?>">Data Guru</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseMapel"><i class="fa fa-users"></i> Mata Pelajaran</a>
+                        </h4>
+                    </div>
+                    <div id="collapseMapel" class="panel-collapse collapse <?php if ($this->uri->segment(2) =='mapel') { echo 'in'; }?>">
+                        <div class="panel-body">
+                            <table class="table">
+                                <tr>
+                                    <td>
+                                        <a href="<?php echo base_url('admin/mapel')?>">Data Mata Pelajaran</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="panel panel-default">
                     <div class="panel-heading">
@@ -28,18 +84,19 @@
                     </div>
                     <div id="collapseThree" class="panel-collapse collapse <?php if ($this->uri->segment(2) =='siswa') { echo 'in'; }?>">
                         <div class="panel-body">
-                            <table class="table">
-                                <tr>
-                                    <td>
-                                        <a href="<?php echo base_url('admin/siswa')?>">Data Siswa</a>
-                                    </td>
-                                </tr>
-                            </table>
+                        <ul>
+                            <li><a href="<?php echo base_url('admin/siswa')?>">Semua Data Siswa</a></li>
+                            <?php
+                            foreach($thajaran as $row)
+                                { ?>
+                            <li><a href="<?php echo base_url('admin/siswa/'.$row->id)?>"><?php echo $row->thajaran;?></a></li>
+                            <?php
+                        }
+                        ?>
+                        </ul>
                         </div>
                     </div>
                 </div>
-
-
 
                 <div class="panel panel-default">
                     <div class="panel-heading">
