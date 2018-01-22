@@ -26,6 +26,7 @@ class Admin extends CI_Controller
         $this->cek_session();
         $data['books']    = $this->admin_model->get_all_books();
         $data['thajaran'] = $this->thajaran_model->get_all_thajaran();
+        $data['content']  = 'content/private/dashboard';
         $this->load->view('layout/header/private/header');
         $this->load->view('content/private/main', $data);
         $this->load->view('layout/footer/private/footer');
@@ -54,6 +55,28 @@ class Admin extends CI_Controller
         $this->load->view('content/private/main', $data);
         $this->load->view('layout/footer/private/footer');
     }
+
+    public function jammapel()
+    {
+
+        $this->load->model('private/mapel_model');
+        $this->load->model('private/jammapel_model');
+        $this->load->model('private/thajaran_model');
+        $this->load->model('private/kelas_model');
+        $this->cek_session();
+        $data['content'] = 'content/private/jammapel';
+
+        $data['kelas']   = $this->kelas_model->get_all_kelas();
+        $data['mapel']   = $this->mapel_model->get_all_mapel();
+        $data['hari']   = $this->mapel_model->get_all_hari();
+        $data['jammapel']   = $this->jammapel_model->get_all_jammapel();
+        $data['thajaran'] = $this->thajaran_model->get_all_thajaran();
+        $data['guru']    = $this->guru_model->get_all_guru();
+        $this->load->view('layout/header/private/header');
+        $this->load->view('content/private/main', $data);
+        $this->load->view('layout/footer/private/footer');
+    }
+
 
     public function kelas()
     {
@@ -92,10 +115,12 @@ class Admin extends CI_Controller
         $this->cek_session();
         $this->load->model('private/mapel_model');
         $this->load->model('private/kelas_model');
+        $this->load->model('private/thajaran_model');
+        $data['thajaran'] = $this->thajaran_model->get_all_thajaran();
         $data['content'] = 'content/private/guru';
         $data['guru']    = $this->guru_model->get_all_guru();
         $data['mapel']   = $this->mapel_model->get_all_mapel();
-        $data['jadwal']    = $this->kelas_model->get_select($id, 'jadwal');
+        //$data['jadwal']    = $this->kelas_model->get_select($id, 'jadwal');
         $this->load->view('layout/header/private/header');
         $this->load->view('content/private/main', $data);
         $this->load->view('layout/footer/private/footer');
@@ -202,6 +227,7 @@ class Admin extends CI_Controller
         $this->cek_session();
         $pass   = $this->input->post('pass');
         $mapels = $this->input->post('mapel');
+
         $data   = array(
             'nik'      => $this->input->post('nik'),
             'nama'     => $this->input->post('nama'),
@@ -443,6 +469,7 @@ class Admin extends CI_Controller
         echo json_encode(array("status" => true));
     }
 
+
     /*
     // ---------------------------- Mapel Management Page -------------------------------------------
      */
@@ -484,4 +511,38 @@ class Admin extends CI_Controller
         $this->mapel_model->delete_by_id($id);
         echo json_encode(array("status" => true));
     }
+
+
+//////////////////////////jam mapel///////////////////////////////////
+
+    public function jammapel_add()
+    {
+        //$this->cek_session();
+        $this->load->model('private/jammapel_model');
+        $data = array(
+            'jam_mulai'     => $this->input->post('start'),
+            'jam_selesai'   => $this->input->post('end'),
+            'hari_id'       => $this->input->post('hari_id'),
+            'kelas_id'      => $this->input->post('kelas_id'),
+            'mapel_id'      => $this->input->post('mapel_id'),
+            'guru_id'       => $this->input->post('guru_id')
+        );
+        $insert = $this->jammapel_model->jammapel_add($data);
+        echo json_encode(array("status" => true));
+    }
+
+
+    public function ajax_jammapel_edit($id)
+    {
+        $this->cek_session();
+        $this->load->model('private/jammapel_model');
+        $data = $this->jammapel_model->get_by_id($id);
+        echo json_encode($data);
+    }
+
+
+
+
 }
+
+

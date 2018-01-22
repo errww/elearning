@@ -1,7 +1,5 @@
 
-    <center><h3>Data guru</h3></center>
-    <br />
-    Belum bisa nampilin daftar mapel per guru di tabel dibawah. bingung query pivot table di CI.
+    <center><h3>Data Guru</h3></center>
     <br />
     <button class="btn btn-success" onclick="add_guru()"><i class="glyphicon glyphicon-plus"></i> Add guru</button>
     <br />
@@ -29,7 +27,7 @@
 
     <tfoot>
       <tr>
-        <th>Nis guru</th>
+        <th>NIK guru</th>
         <th>Nama guru</th>
         <th>Action</th>
       </tr>
@@ -144,7 +142,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h3 class="modal-title">guru Form</h3>
+        <h3 class="modal-title">Guru Form</h3>
       </div>
       <div class="modal-body form">
         <form action="#" id="form" class="form-horizontal">
@@ -154,7 +152,7 @@
             <div class="form-group">
               <label class="control-label col-md-3">NIK guru</label>
               <div class="col-md-9">
-                <input name="nik" placeholder="NIS guru" value="" class="form-control" type="number" id="Nisguru" >
+                <input name="nik" placeholder="NIk guru" value="" class="form-control" type="number" id="Nisguru" >
               </div>
             </div>
             <div class="form-group">

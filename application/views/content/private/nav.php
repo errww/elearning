@@ -3,7 +3,17 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThajaran"><i class="fa fa-building"></i> Tahun Ajaran</a>
+                            <a  href="<?php echo base_url('admin')?>"><i class="fa fa-home"></i> Beranda</a>
+                        </h4>
+                    </div>
+                </div>
+
+
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThajaran"><i class="fa fa-globe"></i> Tahun Ajaran</a>
                         </h4>
                     </div>
                     <div id="collapseThajaran" class="panel-collapse collapse <?php if ($this->uri->segment(2) =='thajaran') { echo 'in'; }?>">
@@ -41,7 +51,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseGuru"><i class="fa fa-users"></i> Guru</a>
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseGuru"><i class="fa fa-user-circle-o"></i> Guru</a>
                         </h4>
                     </div>
                     <div id="collapseGuru" class="panel-collapse collapse <?php if ($this->uri->segment(2) =='guru') { echo 'in'; }?>">
@@ -60,7 +70,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseMapel"><i class="fa fa-users"></i> Mata Pelajaran</a>
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseMapel"><i class="fa fa-book"></i> Mata Pelajaran</a>
                         </h4>
                     </div>
                     <div id="collapseMapel" class="panel-collapse collapse <?php if ($this->uri->segment(2) =='mapel') { echo 'in'; }?>">
@@ -69,6 +79,11 @@
                                 <tr>
                                     <td>
                                         <a href="<?php echo base_url('admin/mapel')?>">Data Mata Pelajaran</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="<?php echo base_url('admin/jammapel')?>">Jam Mata Pelajaran</a>
                                     </td>
                                 </tr>
                             </table>

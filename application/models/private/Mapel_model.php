@@ -18,6 +18,14 @@ class Mapel_model extends CI_Model
         return $query->result();
     }
 
+
+    public function get_all_hari()
+    {
+        $this->db->from('hari');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
     public function get_by_id($id)
     {
         $this->db->select('*');
