@@ -16,11 +16,12 @@ class Guru extends CI_Controller
 
     public function index()
     {
+        $this->cek_session();
         $id                 = $this->session->userdata('id');
         $data['nik']        = $this->session->userdata('nik');
         $data['nama']       = $this->session->userdata('nama');
         $data['navigation'] = $this->uri->segment(1);
-        $this->cek_session();
+      
         $this->load->view('layout/header/private/header');
         $this->load->view('content/private/main', $data);
         $this->load->view('layout/footer/private/footer');
@@ -29,13 +30,14 @@ class Guru extends CI_Controller
     public function profile()
     {
 
+        $this->cek_session();
         $id                 = $this->session->userdata('id');
         $data['nik']        = $this->session->userdata('nik');
         $data['nama']       = $this->session->userdata('nama');
         $data['navigation'] = $this->uri->segment(1);
         $data['profile']    = $this->guru_model->get_select($id, 'profile');
         $data['content']    = 'content/private/guruprofile';
-        $this->cek_session();
+        
         $this->load->view('layout/header/private/header');
         $this->load->view('content/private/main', $data);
         $this->load->view('layout/footer/private/footer');
@@ -43,13 +45,14 @@ class Guru extends CI_Controller
 
     public function pesan()
     {
+        $this->cek_session();
         $id                 = $this->session->userdata('id');
         $data['nik']        = $this->session->userdata('nik');
         $data['nama']       = $this->session->userdata('nama');
         $data['navigation'] = $this->uri->segment(1);
         $data['pesan']      = $this->guru_model->get_select($id, 'pesan');
         $data['content']    = 'content/private/gurupesan';
-        $this->cek_session();
+    
         $this->load->view('layout/header/private/header');
         $this->load->view('content/private/main', $data);
         $this->load->view('layout/footer/private/footer');
@@ -72,7 +75,7 @@ class Guru extends CI_Controller
 
         public function ajax_nilai_edit($id)
     {
-        $this->cek_session();
+        
         $data = $this->guru_model->get_by_id($id);
         echo json_encode($data);
     }
@@ -80,7 +83,7 @@ class Guru extends CI_Controller
         public function nilai_add()
     {
         $this->load->library('upload');
-        $this->cek_session();
+       
         $data = array(
             'mapel' => $this->input->post('nama_mapel'),
         );
@@ -91,7 +94,7 @@ class Guru extends CI_Controller
     public function profile_update()
     {
         $id              = $this->session->userdata('id');
-        $this->cek_session();
+        
         $data = array(
             'profile' => $this->input->post('txt1'),
         );
@@ -102,7 +105,7 @@ class Guru extends CI_Controller
         public function pesan_update()
     {
         $id              = $this->session->userdata('id');
-        $this->cek_session();
+        
         $data = array(
             'pesan' => $this->input->post('txt1'),
         );
@@ -120,7 +123,6 @@ class Guru extends CI_Controller
         $this->form_validation->set_rules('password', 'Password', 'required|max_length[32]');
 
         if ($this->form_validation->run() == false) {
-            //$this->index();
             redirect("admin/login/c");
         } else {
             $nik      = $this->input->post('nik');

@@ -8,9 +8,8 @@ class Admin extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->library('session');
-        $this->load->helper('html');
-        $this->load->helper('form');
+        $this->load->library(array('session','form_validation'));
+        $this->load->helper(array('html','form','login'));
         $this->load->model('private/guru_model');
         $this->load->model('private/siswa_model');
     }
@@ -131,7 +130,7 @@ class Admin extends CI_Controller
         $this->load->model('private/admin_model');
         $data = array(
             'isi' => 'content/private/login',
-        );
+            );
         $this->load->view('layout/header/private/header');
         $this->load->view('layout/content', $data);
         $this->load->view('layout/footer/private/footer');
@@ -140,15 +139,17 @@ class Admin extends CI_Controller
     public function cek()
     {
         $this->load->model('private/admin_model');
-        $this->load->library('form_validation');
-        $this->load->helper('login');
 
         $this->form_validation->set_rules('username', 'Username', 'required|max_length[128]');
         $this->form_validation->set_rules('password', 'Password', 'required|max_length[32]');
 
         if ($this->form_validation->run() == false) {
-            //$this->index();
-            redirect("admin/login/a");
+
+            $this->output
+            ->set_status_header(500)
+            ->set_content_type('application/json')
+            ->set_output(json_encode(array('error' => validation_errors())));
+
         } else {
             $username = $this->input->post('username');
             $password = $this->input->post('password');
@@ -161,16 +162,25 @@ class Admin extends CI_Controller
                         'id'       => $res->username,
                         'password' => $res->password,
                         'level'    => 'superadmin',
-                    );
+                        );
 
                     $this->session->set_userdata($sessionArray);
 
-                    redirect('admin/');
+                    $url = base_url().'admin';
+
+                    $this->output
+                    ->set_status_header(200)
+                    ->set_content_type('application/json')
+                    ->set_output(json_encode(array('redirect' => $url)));
                 }
             } else {
-                $this->session->set_flashdata('error', 'Email or password mismatch');
+                
+                //$this->session->set_flashdata('error', 'Email or password mismatch');
 
-                redirect('admin/login/b');
+                $this->output
+                    ->set_status_header(500)
+                    ->set_content_type('application/json')
+                    ->set_output(json_encode(array('error' => 'Credential salah')));
             }
         }
     }
@@ -204,7 +214,7 @@ class Admin extends CI_Controller
             'id'       => '2',
             'username' => '2',
             'password' => $this->hash_password('2'),
-        );
+            );
         $this->admin_model->add_admin($data);
         return 'success';
     }
@@ -232,7 +242,7 @@ class Admin extends CI_Controller
             'nik'      => $this->input->post('nik'),
             'nama'     => $this->input->post('nama'),
             'password' => $this->hash_password($this->input->post('pass')),
-        );
+            );
         $insert = $this->guru_model->guru_add($data);
 
         if ($mapels > 0) {
@@ -240,7 +250,7 @@ class Admin extends CI_Controller
                 $data2 = array(
                     'id_guru'  => $insert,
                     'id_mapel' => $row,
-                );
+                    );
                 $this->guru_model->guru_mapel_add($data2);
             }
         }
@@ -294,12 +304,12 @@ class Admin extends CI_Controller
                 'nama'     => $this->input->post('nama'),
                 'nik'      => $this->input->post('nik'),
                 'password' => $this->hash_password($this->input->post('pass')),
-            );
+                );
         } else {
             $data = array(
                 'nama' => $this->input->post('nama'),
                 'nik'  => $this->input->post('nik'),
-            );
+                );
         }
 
         $this->guru_model->guru_update(array('id' => $this->input->post('id_guru')), $data);
@@ -309,7 +319,7 @@ class Admin extends CI_Controller
                 $data2 = array(
                     'id_guru'  => $this->input->post('id_guru'),
                     'id_mapel' => $row,
-                );
+                    );
                 $this->guru_model->guru_mapel_add($data2);
             }
         }
@@ -338,7 +348,7 @@ class Admin extends CI_Controller
             'id_kelas'    => $this->input->post('kelas_siswa'),
             'password'    => $this->hash_password($this->input->post('pass_siswa')),
             'id_thajaran' => $this->input->post('th_siswa'),
-        );
+            );
         $insert = $this->siswa_model->siswa_add($data);
         echo json_encode(array("status" => true));
     }
@@ -361,7 +371,7 @@ class Admin extends CI_Controller
                 'id_kelas'    => $this->input->post('kelas_siswa'),
                 'password'    => $this->hash_password($this->input->post('pass_siswa')),
                 'id_thajaran' => $this->input->post('th_siswa'),
-            );
+                );
             $this->siswa_model->siswa_update(array('id_siswa' => $this->input->post('id_siswa_edit')), $data);
             echo json_encode(array("status" => true));
         } else {
@@ -370,7 +380,7 @@ class Admin extends CI_Controller
                 'nama_siswa'  => $this->input->post('nama_siswa'),
                 'id_kelas'    => $this->input->post('kelas_siswa'),
                 'id_thajaran' => $this->input->post('th_siswa'),
-            );
+                );
             $this->siswa_model->siswa_update(array('id_siswa' => $this->input->post('id_siswa_edit')), $data);
             echo json_encode(array("status" => true));
         }
@@ -394,7 +404,7 @@ class Admin extends CI_Controller
         $data = array(
             'nama_kelas' => $this->input->post('nama_kelas'),
             'jadwal' => $this->input->post('txt1'),
-        );
+            );
         $insert = $this->kelas_model->kelas_add($data);
         echo json_encode(array("status" => true));
     }
@@ -414,7 +424,7 @@ class Admin extends CI_Controller
         $data = array(
             'nama_kelas' => $this->input->post('nama_kelas'),
             'jadwal' => $this->input->post('txt1'),
-        );
+            );
         $this->kelas_model->kelas_update(array('id_kelas' => $this->input->post('id_kelas')), $data);
         echo json_encode(array("status" => true));
     }
@@ -437,7 +447,7 @@ class Admin extends CI_Controller
         $this->load->model('private/thajaran_model');
         $data = array(
             'thajaran' => $this->input->post('nama_thajaran'),
-        );
+            );
         $insert = $this->thajaran_model->thajaran_add($data);
         echo json_encode(array("status" => true));
     }
@@ -456,7 +466,7 @@ class Admin extends CI_Controller
         $this->load->model('private/thajaran_model');
         $data = array(
             'thajaran' => $this->input->post('nama_thajaran'),
-        );
+            );
         $this->thajaran_model->thajaran_update(array('id' => $this->input->post('id_thajaran')), $data);
         echo json_encode(array("status" => true));
     }
@@ -480,7 +490,7 @@ class Admin extends CI_Controller
         $this->load->model('private/mapel_model');
         $data = array(
             'mapel' => $this->input->post('nama_mapel'),
-        );
+            );
         $insert = $this->mapel_model->mapel_add($data);
         echo json_encode(array("status" => true));
     }
@@ -499,7 +509,7 @@ class Admin extends CI_Controller
         $this->load->model('private/mapel_model');
         $data = array(
             'mapel' => $this->input->post('nama_mapel'),
-        );
+            );
         $this->mapel_model->mapel_update(array('id' => $this->input->post('id_mapel')), $data);
         echo json_encode(array("status" => true));
     }
@@ -526,7 +536,7 @@ class Admin extends CI_Controller
             'kelas_id'      => $this->input->post('kelas_id'),
             'mapel_id'      => $this->input->post('mapel_id'),
             'guru_id'       => $this->input->post('guru_id')
-        );
+            );
         $insert = $this->jammapel_model->jammapel_add($data);
         echo json_encode(array("status" => true));
     }
