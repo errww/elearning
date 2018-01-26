@@ -15,6 +15,3 @@
 <script src="<?php echo base_url()?>assets/DataTables-1.10.16/media/js/dataTables.bootstrap.js"></script>
 </head>
 <body>
-
-</body>
-</html>
