@@ -68,8 +68,18 @@ class guru_model extends CI_Model
     {
         $this->db->select($select);
         $this->db->where('id', $id);
-        $query = $this->db->get('guru');
-        return $query->row()->$select;
+        $query = $this->db->get('guru')->row();
+
+        return $query;
+
+        // if (isset($query))
+        // {
+        //     echo $query->nik;
+        //     echo $query->nama;
+        //     echo $query->email;
+        // }
+
+        //return $query->row();
     }
 
     public function guru_add($data)
@@ -102,7 +112,7 @@ class guru_model extends CI_Model
         $this->db->delete('guru');
     }
 
-        public function delete_guru_mapel($id)
+    public function delete_guru_mapel($id)
     {
         $this->db->where('id_guru', $id);
         $this->db->delete('guru_mapel');
