@@ -10,13 +10,36 @@
       <div class="container-fluid">
 
         <center>
-          <img src="<?php echo base_url()?>assets/img/NoAvatar.jpg" class="img img-thumbnail img-responsive" alt="Cinque Terre" width="200" height="auto">  
+
+          <?php if(empty($profile->foto)){?>
+          <img src="<?php echo base_url()?>assets/img/NoAvatar.jpg" class="img img-thumbnail img-responsive" alt=" " width="200" height="auto">
+          <?php }else{ ?>
+            <img src="<?php echo base_url()?>assets/avatar/<?php echo $profile->foto ?> " class="img img-thumbnail img-responsive" alt="">
+          <?php } ?>
+
           <br>
           <br>
+          <code>*max file image 2048kb</code>
           <input type="file" name="foto" class="col-md-offset-1">
 
           <br>
         </center>
+
+
+        <!-- success -->
+        <?php if($this->session->flashdata('success')){?>
+        <div class="alert alert-success">
+          <?php echo $this->session->flashdata('success'); ?>
+        </div>
+        <?php } ?>
+
+        <!-- error  -->
+        <?php if($this->session->flashdata('error')){?>
+        <div class="alert alert-danger">
+          <?php echo $this->session->flashdata('error'); ?>
+        </div>
+        <?php } ?>
+
 
 
         <div class="form-group">

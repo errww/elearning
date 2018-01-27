@@ -71,15 +71,37 @@ class guru_model extends CI_Model
         $query = $this->db->get('guru')->row();
 
         return $query;
+    }
 
-        // if (isset($query))
-        // {
-        //     echo $query->nik;
-        //     echo $query->nama;
-        //     echo $query->email;
-        // }
 
-        //return $query->row();
+    /**
+     * [get_where_return_row by acil]
+     * @param  [string] $table  [description]
+     * @param  [string] $select [description]
+     * @param  [string] $where  [description]
+     * @param  [string] $id     [description]
+     * @return [object]         [description]
+     */
+    public function get_where_return_row($table,$select,$where,$id){
+
+        $this->db->select($select);
+        $this->db->where($where,$id);
+        return $this->db->get($table)->row();
+    }
+
+    /**
+     * [get_where insert by acil]
+     * @param  [string] $table  [description]
+     * @param  [string] $select [description]
+     * @param  [where]  $where  [description]
+     * @param  [string] $id     [description]
+     * @return [array]         [description]
+     */
+    public function get_where($table,$select,$where,$id){
+        $this->db->select($select);
+        $this->db->where($where,$id);
+        $this->db->order_by('id','desc');
+        return $this->db->get($table)->result_array();
     }
 
     public function guru_add($data)
@@ -110,6 +132,19 @@ class guru_model extends CI_Model
     {
         $this->db->where('id', $id);
         $this->db->delete('guru');
+    }
+
+    /**
+     * [delete_by_id inserted by acil]
+     * @param  [string] $table [description]
+     * @param  [string] $where [description]
+     * @param  [string] $id    [description]
+     * @return [type]          [description]
+     */
+    public function delete_by_id($table,$where,$id){
+
+        $this->db->where($where, $id);
+        $this->db->delete($table);
     }
 
     public function delete_guru_mapel($id)
