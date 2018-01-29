@@ -23,7 +23,7 @@ class Admin extends CI_Controller
         $this->load->model('private/admin_model');
         $this->load->model('private/thajaran_model');
         $this->cek_session();
-        $data['books']    = $this->admin_model->get_all_books();
+        
         $data['thajaran'] = $this->thajaran_model->get_all_thajaran();
         $data['content']  = 'content/private/dashboard';
         $this->load->view('layout/header/private/header');

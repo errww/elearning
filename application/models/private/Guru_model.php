@@ -2,7 +2,7 @@
     exit('No direct script access allowed');
 }
 
-class guru_model extends CI_Model
+class Guru_model extends CI_Model
 {
     public function __construct()
     {
@@ -48,8 +48,11 @@ class guru_model extends CI_Model
 
     public function get_nilai()
     {
-        $this->db->select('*');
-        $this->db->from('nilai');
+        $this->db->select('n.id as idnilai, judul,nama_kelas,mapel,nama,file');
+        $this->db->from('nilai n');
+        $this->db->join('mapel m', 'n.mapel_id=m.id');
+        $this->db->join('kelas k', 'n.kelas_id=k.id_kelas');
+        $this->db->join('guru g', 'n.id_guru=g.id');
         $query = $this->db->get();
         return $query->result();
     }
@@ -71,17 +74,6 @@ class guru_model extends CI_Model
         $query = $this->db->get('guru')->row();
 
         return $query;
-<<<<<<< HEAD
-
-        // if (isset($query))
-        // {
-        //     echo $query->nik;
-        //     echo $query->nama;
-        //     echo $query->email;
-        // }
-
-        //return $query->row();
-=======
     }
 
 
@@ -113,7 +105,6 @@ class guru_model extends CI_Model
         $this->db->where($where,$id);
         $this->db->order_by('id','desc');
         return $this->db->get($table)->result_array();
->>>>>>> fb6901d8cbb83435e0caade11c6bff0fcf4a5e73
     }
 
     public function guru_add($data)
@@ -146,8 +137,6 @@ class guru_model extends CI_Model
         $this->db->delete('guru');
     }
 
-<<<<<<< HEAD
-=======
     /**
      * [delete_by_id inserted by acil]
      * @param  [string] $table [description]
@@ -161,7 +150,6 @@ class guru_model extends CI_Model
         $this->db->delete($table);
     }
 
->>>>>>> fb6901d8cbb83435e0caade11c6bff0fcf4a5e73
     public function delete_guru_mapel($id)
     {
         $this->db->where('id_guru', $id);

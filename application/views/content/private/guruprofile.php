@@ -10,11 +10,6 @@
       <div class="container-fluid">
 
         <center>
-<<<<<<< HEAD
-          <img src="<?php echo base_url()?>assets/img/NoAvatar.jpg" class="img img-thumbnail img-responsive" alt="Cinque Terre" width="200" height="auto">  
-          <br>
-          <br>
-=======
 
           <?php if(empty($profile->foto)){?>
           <img src="<?php echo base_url()?>assets/img/NoAvatar.jpg" class="img img-thumbnail img-responsive" alt=" " width="200" height="auto">
@@ -25,15 +20,12 @@
           <br>
           <br>
           <code>*max file image 2048kb</code>
->>>>>>> fb6901d8cbb83435e0caade11c6bff0fcf4a5e73
           <input type="file" name="foto" class="col-md-offset-1">
 
           <br>
         </center>
 
 
-<<<<<<< HEAD
-=======
         <!-- success -->
         <?php if($this->session->flashdata('success')){?>
         <div class="alert alert-success">
@@ -50,7 +42,6 @@
 
 
 
->>>>>>> fb6901d8cbb83435e0caade11c6bff0fcf4a5e73
         <div class="form-group">
 
           <input type="hidden" name="id" class="form-control"  value="<?php echo $profile->id;?>">
@@ -143,7 +134,6 @@
         </div>
 
       </div>
-<<<<<<< HEAD
     </div>
     <div class="panel-footer">
 
@@ -191,55 +181,6 @@
 
       </div>
     </div>
-=======
-    </div>
-    <div class="panel-footer">
-
-      <input type="submit" class="btn btn-primary" value="Update">
-
-    </div>
-  </form>
-</div>
-
-
-<div class="panel panel-primary">
-
-  <form action="<?php echo site_url('guru/profile_update_password')?>" id="form" class="form-horizontal" enctype="multipart/form-data" method="post">
-    <div class="panel-footer">
-      <div class="container-fluid">
-
-        <!-- success updating password message -->
-        <?php if($this->session->flashdata('success_update_password')){?>
-        <div class="alert alert-success">
-          <?php echo $this->session->flashdata('success_update_password'); ?>
-        </div>
-        <?php } ?>
-
-        <!-- error updating password  -->
-        <?php if($this->session->flashdata('error_update_password')){?>
-        <div class="alert alert-danger">
-          <?php echo $this->session->flashdata('error_update_password'); ?>
-        </div>
-        <?php } ?>
-
-        <div class="form-group">
-          <div class="col-md-6">
-            <label><small>Password Lama</small></label>
-            <?php echo (form_error('old_password') == '') ? '' : form_error('old_password', '<p class="text-danger">*', '</p>') ; ?>
-            <input type="password" name="old_password" class="form-control">
-          </div>
-
-          <div class="col-md-6">
-            <label><small>Password Baru</small></label>
-            <?php echo (form_error('new_password') == '') ? '' : form_error('new_password', '<p class="text-danger">*', '</p>') ; ?>
-            <input type="password" name="new_password" class="form-control">
-          </div>
-
-        </div>
-
-      </div>
-    </div>
->>>>>>> fb6901d8cbb83435e0caade11c6bff0fcf4a5e73
 
     <div class="panel-footer">
       <input type="submit" class="btn btn-success" value="Ubah Password">

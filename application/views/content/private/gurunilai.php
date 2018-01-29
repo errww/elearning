@@ -2,23 +2,27 @@
     <center><h3>Data Nilai</h3></center>
     <br />
     <br />
-    <button class="btn btn-success" onclick="add_guru()"><i class="glyphicon glyphicon-plus"></i> Add nilai</button>
+    <button class="btn btn-success" onclick="add_guru()"><i class="glyphicon glyphicon-plus"></i> Add Nilai</button>
     <br />
     <br />
     <table id="table_id" class="table table-striped table-bordered" cellspacing="0" width="100%">
       <thead>
         <tr>
-          <th>File</th>
+          <th>Judul</th>
+          <th>Kelas</th>
+          <th>Mapel</th>
           <th style="width:125px;">Action</p></th>
         </tr>
       </thead>
       <tbody>
         <?php foreach($nilai as $nilais){?>
         <tr>
-         <td><?php echo $nilais->file;?></td>
+         <td><?php echo $nilais->judul;?></td>
+         <td><?php echo $nilais->nama_kelas;?></td>
+         <td><?php echo $nilais->mapel;?></td>
          <td>
-          <button class="btn btn-warning" onclick="edit(<?php echo $nilais->id;?>)"><i class="glyphicon glyphicon-pencil"></i></button>
-          <button class="btn btn-danger" onclick="destroy(<?php echo $nilais->id;?>)"><i class="glyphicon glyphicon-remove"></i></button>
+          <button class="btn btn-warning" onclick="edit(<?php echo $nilais->idnilai;?>)"><i class="glyphicon glyphicon-pencil"></i></button>
+          <button class="btn btn-danger" onclick="destroy(<?php echo $nilais->idnilai;?>)"><i class="glyphicon glyphicon-remove"></i></button>
         </td>
       </tr>
       <?php }?>
@@ -26,7 +30,9 @@
 
     <tfoot>
       <tr>
-        <th>File</th>
+          <th>Judul</th>
+          <th>Kelas</th>
+          <th>Mapel</th>
         <th>Action</th>
       </tr>
     </tfoot>
@@ -87,22 +93,30 @@
       {
         url = "<?php echo site_url('index.php/guru/nilai_update')?>";
       }
- 
+        var form = $('form')[0];
+         var formData = new FormData(form);
        // ajax adding data to database
           $.ajax({
             url : url,
             type: "POST",
-            data: $('#form').serialize(),
+            //data: $('#form').serialize(),
+            data : formData,
             dataType: "JSON",
+            cache: false,
+            contentType: false,
+            processData: false,
             success: function(data)
             {
                //if success close modal and reload ajax table
                $('#modal_form').modal('hide');
               location.reload();// for reload a page
+           //console.log(data.status);
+           //console.log(data.msg);
             },
-            error: function (jqXHR, textStatus, errorThrown)
+            error: function (jqXHR, textStatus, errorThrown,status)
             {
                 alert('Error adding / update data');
+                
             }
         });
     }
@@ -140,18 +154,49 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h3 class="modal-title">guru Form</h3>
+        <h3 class="modal-title">Nilai Form</h3>
       </div>
       <div class="modal-body form">
-        <form action="#" id="form" class="form-horizontal">
-          <input type="hidden" value="" name="id_guru"/>
+        <form action="#" id="form" class="form-horizontal"  enctype="multipart/form-data">
+          <input type="hidden" value="<?php echo $id; ?>" name="id_guru"/>
           <div class="form-body">
+
+          <div class="form-group">
+              <label class="control-label col-md-3">Kelas Siswa</label>
+              <div class="col-md-9">
+                 <select name="kelas_id" class="form-control">
+                    <?php foreach($kelas as $row):?>
+                     <option value="<?php echo $row->id_kelas ?>"><?php echo $row->nama_kelas ?></option>
+                    <?php endforeach;?>
+                  </select> 
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="control-label col-md-3">Mapel</label>
+              <div class="col-md-9">
+                 <select name="mapel_id" class="form-control">
+                    <?php foreach($mapel as $row):?>
+                     <option value="<?php echo $row->id ?>"><?php echo $row->mapel ?></option>
+                    <?php endforeach;?>
+                  </select> 
+              </div>
+            </div>
+
             <div class="form-group">
               <label class="control-label col-md-3">Nilai</label>
               <div class="col-md-9">
-                <input name="nik" placeholder="NIS guru" value="" class="form-control" type="number" id="Nisguru" >
+                <input name="userfile" placeholder="Nilai"  class="form-control" type="file" id="userfile" required="" />
               </div>
-            </div>       
+            </div> 
+
+              <div class="form-group">
+              <label class="control-label col-md-3">Judul</label>
+              <div class="col-md-9">
+                <input name="judul" placeholder="Judul"  class="form-control" type="text" required="" />
+              </div>
+            </div> 
+
           </div>
         </form>
           </div>

@@ -12,6 +12,9 @@ class Guru extends CI_Controller
         $this->load->library(array('session','form_validation'));
         $this->load->helper(array('html','form','login'));
         $this->load->model('private/guru_model');
+        $this->load->model('private/kelas_model');
+        $this->load->model('private/mapel_model');
+        $this->load->model('private/nilai_model');
     }
 
     public function index()
@@ -20,6 +23,7 @@ class Guru extends CI_Controller
         $id                 = $this->session->userdata('id');
         $data['nik']        = $this->session->userdata('nik');
         $data['nama']       = $this->session->userdata('nama');
+        $data['content']    = '';
         $data['navigation'] = $this->uri->segment(1);
 
         $this->load->view('layout/header/private/header');
@@ -44,10 +48,7 @@ class Guru extends CI_Controller
     public function pesan()
     {
         $this->cek_session();
-<<<<<<< HEAD
-=======
 
->>>>>>> fb6901d8cbb83435e0caade11c6bff0fcf4a5e73
         $id                 = $this->session->userdata('id');
         // $data['nik']        = $this->session->userdata('nik');
         // $data['nama']       = $this->session->userdata('nama');
@@ -160,13 +161,15 @@ class Guru extends CI_Controller
     public function nilai()
     {
         $this->cek_session();
-        $id                 = $this->session->userdata('id');
+        $data['id']         = $this->session->userdata('id');
         $data['nik']        = $this->session->userdata('nik');
         $data['nama']       = $this->session->userdata('nama');
         $data['navigation'] = $this->uri->segment(1);
-
+        $data['kelas']    = $this->kelas_model->get_all_kelas();
         $data['content'] = 'content/private/gurunilai';
         $data['nilai']    = $this->guru_model->get_nilai();
+        $data['mapel']    = $this->mapel_model->get_all_mapel();
+
         $this->load->view('layout/header/private/header');
         $this->load->view('content/private/main', $data);
         $this->load->view('layout/footer/private/footer');
@@ -181,19 +184,70 @@ class Guru extends CI_Controller
 
     public function nilai_add()
     {
-        $this->load->library('upload');
+        
+        $file_element_name = 'userfile';
 
-        $data = array(
-            'mapel' => $this->input->post('nama_mapel'),
-            );
-        $insert = $this->mapel_model->mapel_add($data);
-        echo json_encode(array("status" => true));
+
+        $config['upload_path'] = './uploads/';
+        $config['allowed_types'] = 'gif|jpg|png|doc|txt|xls|';
+        $config['max_size'] = 1024 * 8;
+        $config['encrypt_name'] = TRUE;
+
+         $this->load->library('upload', $config);
+ 
+        if (!$this->upload->do_upload($file_element_name))
+        {
+            $status = 'error';
+            $msg = $this->upload->display_errors('', '');
+        }
+        else
+        {
+            $data = $this->upload->data();
+                    $data_nilai = array(
+                    'file' =>  $data['file_name'],
+                    'id_guru' => $this->input->post('id_guru'),
+                    'mapel_id' => $this->input->post('mapel_id'),
+                    'kelas_id' => $this->input->post('kelas_id'),
+                    'judul' => $this->input->post('judul'),
+                    );
+        
+            $file_id  = $this->nilai_model->nilai_add($data_nilai);
+
+            if($file_id)
+            {
+                $status = "success";
+                $msg = "File successfully uploaded";
+            }
+            else
+            {
+                unlink($data['full_path']);
+                $status = "error";
+                $msg = "Something went wrong when saving the file, please try again.";
+            }
+        }
+        @unlink($_FILES[$file_element_name]);
+
+
+
+  
+        echo json_encode(array("status" => $data, "msg" =>$msg));
+
     }
+
+
+    public function nilai_delete($id){
+
+        
+        $this->nilai_model->delete_nilai($id);
+        echo json_encode(array("status" => true));
+
+    }
+    
+
 
     public function profile_update()
     {
         $this->cek_session();
-<<<<<<< HEAD
 
         // form validation
         $this->form_validation->set_rules('nik', 'NIP', 'required|numeric');
@@ -218,128 +272,9 @@ class Guru extends CI_Controller
             $this->load->view('layout/header/private/header');
             $this->load->view('content/private/main', $data);
             $this->load->view('layout/footer/private/footer');
-        
-        }else{
-
-            print_r($this->input->post());
-
-        }
-        
-        // $data = array(
-        //     'profile' => $this->input->post('txt1'),
-        //     );
-
-        // $this->guru_model->guru_update(array('id' => $id), $data);
-
-        // echo json_encode(array("status" => true));
-    }
-
-    //update password function
-    public function profile_update_password(){
-
-        $this->cek_session();
-
-        // form validation
-        $this->form_validation->set_rules('old_password', 'Password Lama', 'required');
-        $this->form_validation->set_rules('new_password', 'Password Baru', 'required|min_length[6]|max_length[50]');
-=======
-
-        // form validation
-        $this->form_validation->set_rules('nik', 'NIP', 'required|numeric');
-        $this->form_validation->set_rules('nama', 'Nama', 'required|max_length[50]');
-        $this->form_validation->set_rules('email', 'Email', 'required|valid_email|max_length[50]');
-        $this->form_validation->set_rules('telp', 'Telp', 'required|numeric|max_length[20]');
-        $this->form_validation->set_rules('jenis_kelamin', 'Jenis Kelamin', 'required');
-        $this->form_validation->set_rules('alamat', 'Alamat', 'required|max_length[255]');
-        $this->form_validation->set_rules('tgl', 'Tgl', 'required|numeric|max_length[2]');
-        $this->form_validation->set_rules('bulan', 'Bulan', 'required|numeric|max_length[2]');
-        $this->form_validation->set_rules('tahun', 'Tahun', 'required|numeric|max_length[4]');
-
->>>>>>> fb6901d8cbb83435e0caade11c6bff0fcf4a5e73
-
-        //if validation run false
-        if($this->form_validation->run() === false){
-
-<<<<<<< HEAD
-            //load view of content profile
-=======
->>>>>>> fb6901d8cbb83435e0caade11c6bff0fcf4a5e73
-            $data['navigation'] = $this->uri->segment(1);
-            $data['profile']    = $this->guru_model->get_select($this->session->userdata('id'), '*');
-
-            $data['content']    = 'content/private/guruprofile';
-
-            $this->load->view('layout/header/private/header');
-            $this->load->view('content/private/main', $data);
-            $this->load->view('layout/footer/private/footer');
 
         }else{
 
-<<<<<<< HEAD
-            $oldpassword  = $this->input->post('old_password');
-            $newpassword  = $this->input->post('new_password');
-
-            //cek password exist
-            $this->db->select('*');
-            $this->db->from('guru');
-            $this->db->where('id', $this->session->userdata('id'));
-            $query = $this->db->get()->result();
-
-            //jika hasil tidak kosong
-            if (!empty($query)) {
-                //jika verifyed
-                if (verifyHashedPassword($oldpassword, $query[0]->password)) {
-                    
-                    //update password guru
-                    $dataPass = array ('password' => $this->hash_password($newpassword));
-
-                    $this->db->where('id',$this->session->userdata('id'));
-                    $this->db->update('guru',$dataPass);
-
-                    //tampilkan pesan
-                    $this->session->set_flashdata('success_update_password', 'Berhasil update password, login selanjutnya menggunakan password baru anda ! ');
-
-                    //redirect
-                    redirect('/guru/profile', 'refresh');
-                    
-                
-                } else {
-                    
-    
-                    //tampilkan pesan
-                    $this->session->set_flashdata('error_update_password', 'Gagal update password, password lama salah ! ');
-                    //redirect
-                    redirect('/guru/profile', 'refresh');
-                }
-
-            } else {
-
-                 //tampilkan pesan
-                    $this->session->set_flashdata('error_update_password', 'Gagal update password, tidak ada data !');
-                    //redirect
-                    redirect('/guru/profile', 'refresh');
-            }
-
-
-        }
-
-    }
-
-    public function pesan_update()
-    {
-        $id              = $this->session->userdata('id');
-        
-        $data = array(
-            'pesan' => $this->input->post('txt1'),
-            );
-        $this->guru_model->guru_update(array('id' => $id), $data);
-        echo json_encode(array("status" => true));
-    }
-
-    public function cek()
-    {
-        $this->load->model('private/guru_model');
-=======
 
             if(!empty($_FILES['foto']['name'])){
 
@@ -422,7 +357,6 @@ class Guru extends CI_Controller
 
     }
 
->>>>>>> fb6901d8cbb83435e0caade11c6bff0fcf4a5e73
 
 }
 
@@ -487,24 +421,6 @@ public function profile_update_password(){
                 redirect('/guru/profile', 'refresh');
             }
 
-<<<<<<< HEAD
-        if ($this->form_validation->run() == false) {
-            redirect("admin/login/c");
-        } else {
-            $nik      = $this->input->post('nik');
-            $password = $this->input->post('password');
-
-            $result = $this->guru_model->loginMe($nik, $password);
-
-            if (count($result) > 0) {
-                foreach ($result as $res) {
-                    $sessionArray = array(
-                        'id'    => $res->id,
-                        'nama'  => $res->nama,
-                        'nik'   => $res->nik,
-                        'level' => 'guru',
-                        );
-=======
         } else {
 
                  //tampilkan pesan
@@ -542,7 +458,6 @@ public function cek()
                     'nik'   => $res->nik,
                     'level' => 'guru',
                     );
->>>>>>> fb6901d8cbb83435e0caade11c6bff0fcf4a5e73
 
                 $nik = $res->nik;
                 $this->session->set_userdata($sessionArray);
@@ -577,17 +492,4 @@ private function hash_password($password)
     return password_hash($password, PASSWORD_BCRYPT);
 }
 
-<<<<<<< HEAD
-        $this->session->sess_destroy();
-        redirect('admin/login');
-    }
-
-
-    ///////////////////////////////// hash the password ////////////////////////////////
-    private function hash_password($password)
-    {
-        return password_hash($password, PASSWORD_BCRYPT);
-    }
-=======
->>>>>>> fb6901d8cbb83435e0caade11c6bff0fcf4a5e73
 }

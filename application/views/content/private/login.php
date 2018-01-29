@@ -7,7 +7,7 @@
 				<div class="panel-heading">
 					<div class="row">
 						<div class="col-xs-6">
-							<a href="#" class="active" id="login-form-link"><i class="fa fa-users" aria-hidden="true"></i> Admin</a>
+							<a href="#" class="active" id="login-form-link"><i class="fa fa-users" aria-hidden="true"></i> Siswa</a>
 						</div>
 						<div class="col-xs-6">
 							<a href="#" id="register-form-link"><i class="fa fa-user-plus" aria-hidden="true"></i> Guru</a>
