@@ -3,7 +3,7 @@
 <br />
 <script src="https://cdn.ckeditor.com/4.7.3/standard/ckeditor.js"></script>
 
-<button type="button" class="btn btn-success btn-lg" id="btn-toggle"><i id="icon-toggle" class="fa fa-plus-square"></i> Tambah Informasi</button>
+<button type="button" class="btn btn-success btn-sm" id="btn-toggle"><i id="icon-toggle" class="fa fa-plus-square"></i> Tambah Informasi</button>
 
 <br>
 <br>

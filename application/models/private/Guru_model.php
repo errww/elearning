@@ -46,10 +46,23 @@ class guru_model extends CI_Model
         return $query->result();
     }
 
-    public function get_nilai()
+    public function get_nilai_by_guru()
     {
-        $this->db->select('*');
+        $this->db->select('nilai.id,
+                           nilai.title , 
+                           nilai.file,
+                           guru.nama, 
+                           thajaran.thajaran , 
+                           mapel.mapel , 
+                           semester.semester');
         $this->db->from('nilai');
+        $this->db->join('guru', 'guru.id = nilai.id_guru');
+        $this->db->join('thajaran','thajaran.id = nilai.id_tahunajaran');
+        $this->db->join('mapel', 'mapel.id = nilai.id_mapel');
+        $this->db->join('semester', 'semester.id = nilai.semester');
+
+        $this->db->order_by('id','desc');
+
         $query = $this->db->get();
         return $query->result();
     }

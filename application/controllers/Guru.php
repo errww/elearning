@@ -10,7 +10,7 @@ class Guru extends CI_Controller
         parent::__construct();
         $this->load->database();
         $this->load->library(array('session','form_validation'));
-        $this->load->helper(array('html','form','login'));
+        $this->load->helper(array('html','form','login','file'));
         $this->load->model('private/guru_model');
     }
 
@@ -154,37 +154,215 @@ class Guru extends CI_Controller
         echo json_encode(array("status" => true));
     }
 
+    /**
+     * [nilai show data]
+     * @author [acil] 
+     * @return [type] [description]
+     */
     public function nilai()
     {
         $this->cek_session();
         $id                 = $this->session->userdata('id');
-        $data['nik']        = $this->session->userdata('nik');
-        $data['nama']       = $this->session->userdata('nama');
+        //$data['nik']        = $this->session->userdata('nik');
+        //$data['nama']       = $this->session->userdata('nama');
         $data['navigation'] = $this->uri->segment(1);
 
-        $data['content'] = 'content/private/gurunilai';
-        $data['nilai']    = $this->guru_model->get_nilai();
+        $data['content']    = 'content/private/gurunilai';
+        $data['nilai']      = $this->guru_model->get_nilai_by_guru();
+
+        $data['mapel']      = $this->db->get('mapel')->result_array();
+        $data['thajaran']   = $this->db->order_by('id','desc')->get('thajaran')->result_array();
+        $data['semester']   = $this->db->get('semester')->result_array();
+
+
         $this->load->view('layout/header/private/header');
         $this->load->view('content/private/main', $data);
         $this->load->view('layout/footer/private/footer');
     }
 
+    /**
+     * [nilai_add save nilai]
+     * @author [acil] 
+     * @return [type] [description]
+     */
+    public function nilai_add()
+    {
+        $this->cek_session();
+
+        $this->form_validation->set_rules('title', 'Title', 'required|max_length[255]');
+        $this->form_validation->set_rules('mapel', 'Mapel', 'required');
+        $this->form_validation->set_rules('thajaran', 'Tahun Ajaran', 'required');
+        $this->form_validation->set_rules('semester', 'Semester', 'required');
+
+        if($this->form_validation->run() === false){
+
+            $this->output
+            ->set_status_header(500)
+            ->set_content_type('application/json')
+            ->set_output(json_encode(array('error' => validation_errors())));
+
+        }else{
+
+
+            $data = array(
+                'title' => $this->input->post('title'),
+                'id_guru' => $this->session->userdata('id'),
+                'id_mapel' => $this->input->post('mapel'),
+                'id_tahunajaran' => $this->input->post('thajaran'),
+                'semester' => $this->input->post('semester'), 
+                );
+
+                //save into database
+            $this->db->insert('nilai',$data);
+
+            $this->output
+            ->set_status_header(200)
+            ->set_content_type('application/json')
+            ->set_output(json_encode(array('success' => 'Berhasil insert data !')));
+
+        }
+    }
+
+
+    /**
+     * [nilai_file_add]
+     * @author [acil]
+     * @return [type] [description]
+     */
+    public function nilai_file_add($id){
+
+        $this->cek_session();
+
+        $this->form_validation->set_rules('file', '', 'callback_file_check');
+
+        if($this->form_validation->run() === false){
+
+            $this->output
+            ->set_status_header(500)
+            ->set_content_type('application/json')
+            ->set_output(json_encode(array('error' => validation_errors())));
+
+        }else{
+
+            //upload configuration
+            $config['upload_path']   = './assets/file_nilai/';
+            $config['allowed_types'] = 'gif|jpg|png|pdf';
+            $config['max_size']      = '2048';
+            $config['encrypt_name'] = TRUE;
+            $this->load->library('upload', $config);
+
+            //upload file to directory
+            if($this->upload->do_upload('file')){
+                $uploadData = $this->upload->data();
+                $uploadedFile = $uploadData['file_name'];
+
+                //insert file information into the database
+                
+                $data = array('file' => $uploadedFile);
+
+                $this->db->where('id', $id);
+                $this->db->update('nilai', $data);
+
+                $this->output
+                ->set_status_header(200)
+                ->set_content_type('application/json')
+                ->set_output(json_encode(array('success' => 'Berhasil upload !')));
+            }else{
+                $this->output
+                ->set_status_header(500)
+                ->set_content_type('application/json')
+                ->set_output(json_encode(array('error' => $this->upload->display_errors())));
+
+            }
+
+        }
+
+    }
+
+
+    /**
+     * [file_check callback validation]
+     * @author [acil] 
+     * @param  [type] $str [description]
+     * @return [type]      [description]
+     */
+    public function file_check($str){
+
+        if(isset($_FILES['file']['name']) && $_FILES['file']['name']!=""){
+
+            $allowed_mime_type_arr = array('application/pdf','application/xls','application/xlsx');
+            $mime = get_mime_by_extension($_FILES['file']['name']);
+
+            if(in_array($mime, $allowed_mime_type_arr)){
+                return true;
+            }else{
+                $this->form_validation->set_message('file_check', 'Please select only pdf/xls/xlsx file.');
+                return false;
+            }
+        }else{
+            $this->form_validation->set_message('file_check', 'Please choose a file to upload.');
+            return false;
+        }
+    }
+
+
+    /**
+     * [ajax_nilai_edit description]
+     * @author [acil]
+     * @param  [type] $id [description]
+     * @return [type]     [description]
+     */
     public function ajax_nilai_edit($id)
     {
 
-        $data = $this->guru_model->get_by_id($id);
+        $data = $this->db->where('id',$id)->get('nilai')->row();
         echo json_encode($data);
     }
 
-    public function nilai_add()
-    {
-        $this->load->library('upload');
+    public function nilai_update(){
 
+        $id = $this->input->post('id_nilai');
         $data = array(
-            'mapel' => $this->input->post('nama_mapel'),
+            'title' => $this->input->post('title'),
+            'id_mapel' => $this->input->post('mapel'),
+            'id_tahunajaran' => $this->input->post('thajaran'),
+            'semester' => $this->input->post('semester'),
             );
-        $insert = $this->mapel_model->mapel_add($data);
+
+         $this->db->where('id', $id);
+         $this->db->update('nilai', $data);
+
         echo json_encode(array("status" => true));
+
+
+    }
+
+    /**
+     * [nilai_delete]
+     * @author [acil] 
+     * @param  [type] $id [description]
+     * @return [type]     [description]
+     */
+    public function nilai_delete($id){
+
+        $this->cek_session();
+
+        $this->db->where('id', $id);
+        $this->db->delete('nilai');
+
+        echo json_encode(array("status" => true));
+    }
+
+    /**
+     * [download_file_nilai description]
+     * @author [acil] 
+     * @param  [type] $file [description]
+     * @return [type]       [description]
+     */
+    public function download_file_nilai($file){
+
+        $this->load->helper('download');
+        force_download('assets/file_nilai/'.$file, NULL);
     }
 
     public function profile_update()
