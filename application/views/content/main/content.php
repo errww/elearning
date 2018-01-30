@@ -51,60 +51,18 @@
         <h2 class="my-4"><small>E-Learning Materi</small></h2>
       </div>
 
+ <?php foreach ($materi as $row) { ?>
       <div class="col-lg-4 col-sm-6 text-center mb-4">
-        <img class="rounded-circle img-fluid d-block mx-auto" src="http://placehold.it/100x100" alt="">
+      <a href="<?php echo base_url("uploads/$row->file"); ?>">
+        <img class="rounded-circle img-fluid d-block mx-auto" src="https://cdn3.iconfinder.com/data/icons/dental-blue-icons/512/Untitled-6.png" width="100" height="100" alt=""></a>
         <h3>
-          <small>Title</small>
+          <small><?php echo $row->nama; ?></small>
         </h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-          tempor incididunt</p>
+        <p><?php echo $row->judul; ?></p>
+        
         </div>
 
-        <div class="col-lg-4 col-sm-6 text-center mb-4">
-          <img class="rounded-circle img-fluid d-block mx-auto" src="http://placehold.it/100x100" alt="">
-          <h3>
-            <small>Title</small>
-          </h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-            tempor incididunt</p>
-          </div>
-
-          <div class="col-lg-4 col-sm-6 text-center mb-4">
-            <img class="rounded-circle img-fluid d-block mx-auto" src="http://placehold.it/100x100" alt="">
-            <h3>
-              <small>Title</small>
-            </h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-              tempor incididunt</p>
-            </div>
-
-            <div class="col-lg-4 col-sm-6 text-center mb-4">
-              <img class="rounded-circle img-fluid d-block mx-auto" src="http://placehold.it/100x100" alt="">
-              <h3>
-                <small>Title</small>
-              </h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                tempor incididunt</p>
-              </div>
-
-              <div class="col-lg-4 col-sm-6 text-center mb-4">
-                <img class="rounded-circle img-fluid d-block mx-auto" src="http://placehold.it/100x100" alt="">
-                <h3>
-                  <small>Title</small>
-                </h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                  tempor incididunt</p>
-                </div>
-
-                <div class="col-lg-4 col-sm-6 text-center mb-4">
-                  <img class="rounded-circle img-fluid d-block mx-auto" src="http://placehold.it/100x100" alt="">
-                  <h3>
-                    <small>Title</small>
-                  </h3>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                    tempor incididunt</p>
-                  </div>
-
+<?php } ?>
                 </div>
               </div>
             </section>

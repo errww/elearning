@@ -57,6 +57,19 @@ class Guru_model extends CI_Model
         return $query->result();
     }
 
+
+
+        public function get_materi()
+    {
+        $this->db->select('n.id as idmateri, judul,nama_kelas,mapel,nama,file');
+        $this->db->from('materi n');
+        $this->db->join('mapel m', 'n.mapel_id=m.id');
+        $this->db->join('kelas k', 'n.kelas_id=k.id_kelas');
+        $this->db->join('guru g', 'n.id_guru=g.id');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
     public function get_by_id($id)
     {
         $this->db->select('*');

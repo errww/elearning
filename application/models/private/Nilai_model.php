@@ -19,12 +19,24 @@ class Nilai_model extends CI_Model
         return $this->db->insert_id();
     }
 
+        public function materi_add($data)
+    {
+        $this->db->insert('materi', $data);
+        return $this->db->insert_id();
+    }
+
 
 
     public function delete_nilai($id)
     {
         $this->db->where('id', $id);
         $this->db->delete('nilai');
+    }
+
+        public function delete_materi($id)
+    {
+        $this->db->where('id', $id);
+        $this->db->delete('materi');
     }
 
 }

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 29, 2018 at 08:13 PM
+-- Generation Time: Jan 30, 2018 at 03:58 AM
 -- Server version: 10.1.10-MariaDB
 -- PHP Version: 5.6.19
 
@@ -226,7 +226,10 @@ INSERT INTO `mapel` (`id`, `mapel`) VALUES
 CREATE TABLE `materi` (
   `id` int(11) NOT NULL,
   `file` varchar(300) NOT NULL,
-  `id_guru` int(11) NOT NULL
+  `id_guru` int(11) NOT NULL,
+  `mapel_id` int(11) NOT NULL,
+  `kelas_id` int(11) NOT NULL,
+  `judul` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -243,15 +246,6 @@ CREATE TABLE `nilai` (
   `kelas_id` int(11) NOT NULL,
   `judul` varchar(225) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `nilai`
---
-
-INSERT INTO `nilai` (`id`, `file`, `id_guru`, `mapel_id`, `kelas_id`, `judul`) VALUES
-(35, '7af22e502bec22f496463f649c8007ec.png', 45, 5, 10, 'Bahasa Semester 1'),
-(36, 'c42f64b7d9c39fd698f4e8dd21c6051d.jpg', 45, 5, 10, 'Bahasa Semester 2'),
-(37, '79f1915e21199958f53918d7da65b7fb.png', 45, 6, 10, 'Bahasa semester 4b');
 
 -- --------------------------------------------------------
 
@@ -427,7 +421,7 @@ ALTER TABLE `mapel`
 -- AUTO_INCREMENT for table `materi`
 --
 ALTER TABLE `materi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `nilai`
 --

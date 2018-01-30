@@ -175,6 +175,8 @@ class Guru extends CI_Controller
         $this->load->view('layout/footer/private/footer');
     }
 
+
+
     public function ajax_nilai_edit($id)
     {
 
@@ -243,6 +245,90 @@ class Guru extends CI_Controller
 
     }
     
+
+
+
+     public function materi()
+    {
+        $this->cek_session();
+        $data['id']         = $this->session->userdata('id');
+        $data['nik']        = $this->session->userdata('nik');
+        $data['nama']       = $this->session->userdata('nama');
+        $data['navigation'] = $this->uri->segment(1);
+        $data['kelas']    = $this->kelas_model->get_all_kelas();
+        $data['content'] = 'content/private/gurumateri';
+        $data['materi']    = $this->guru_model->get_materi();
+        $data['mapel']    = $this->mapel_model->get_all_mapel();
+
+        $this->load->view('layout/header/private/header');
+        $this->load->view('content/private/main', $data);
+        $this->load->view('layout/footer/private/footer');
+    }
+
+
+
+
+
+     public function materi_add()
+    {
+        
+        $file_element_name = 'userfile';
+
+
+        $config['upload_path'] = './uploads/';
+        $config['allowed_types'] = 'gif|jpg|png|doc|txt|xls|';
+        $config['max_size'] = 1024 * 8;
+        $config['encrypt_name'] = TRUE;
+
+         $this->load->library('upload', $config);
+ 
+        if (!$this->upload->do_upload($file_element_name))
+        {
+            $status = 'error';
+            $msg = $this->upload->display_errors('', '');
+        }
+        else
+        {
+            $data = $this->upload->data();
+                    $data_nilai = array(
+                    'file' =>  $data['file_name'],
+                    'id_guru' => $this->input->post('id_guru'),
+                    'mapel_id' => $this->input->post('mapel_id'),
+                    'kelas_id' => $this->input->post('kelas_id'),
+                    'judul' => $this->input->post('judul'),
+                    );
+        
+            $file_id  = $this->nilai_model->materi_add($data_nilai);
+
+            if($file_id)
+            {
+                $status = "success";
+                $msg = "File successfully uploaded";
+            }
+            else
+            {
+                unlink($data['full_path']);
+                $status = "error";
+                $msg = "Something went wrong when saving the file, please try again.";
+            }
+        }
+        @unlink($_FILES[$file_element_name]);
+
+
+
+  
+        echo json_encode(array("status" => $data, "msg" =>$msg));
+
+    }
+
+
+    public function materi_delete($id){
+
+        
+        $this->nilai_model->delete_materi($id);
+        echo json_encode(array("status" => true));
+
+    }
 
 
     public function profile_update()
