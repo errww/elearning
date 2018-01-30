@@ -2,7 +2,7 @@
     exit('No direct script access allowed');
 }
 
-class guru_model extends CI_Model
+class Guru_model extends CI_Model
 {
     public function __construct()
     {
@@ -48,6 +48,7 @@ class guru_model extends CI_Model
 
     public function get_nilai_by_guru()
     {
+
         $this->db->select('nilai.id,
                            nilai.title , 
                            nilai.file,
@@ -63,6 +64,42 @@ class guru_model extends CI_Model
 
         $this->db->order_by('id','desc');
 
+
+        // $this->db->select('n.id as idnilai, judul,nama_kelas,mapel,nama,file');
+        // $this->db->from('nilai n');
+        // $this->db->join('mapel m', 'n.mapel_id=m.id');
+        // $this->db->join('kelas k', 'n.kelas_id=k.id_kelas');
+        // $this->db->join('guru g', 'n.id_guru=g.id');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function get_nilai(){
+
+        $this->db->select('n.id_nilai as idnilai, title,nama_kelas,m.nama_mapel,nama,file');
+        $this->db->from('nilai n');
+        $this->db->join('mapel m', 'n.id_mapel=m.id_mapel');
+        $this->db->join('kelas k', 'n.id_kelas=k.id_kelas');
+        $this->db->join('guru g', 'n.id_guru=g.id');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+
+
+    public function get_materi()
+    {
+        $this->db->select('n.id_materi as idmateri, 
+                          g.nama as nama_guru , 
+                          k.nama_kelas ,
+                          m.nama_mapel, 
+                          n.nama_materi, 
+                          n.file_materi'
+                          );
+        $this->db->from('materi n');
+        $this->db->join('mapel m', 'n.id_mapel=m.id_mapel');
+        $this->db->join('kelas k', 'n.id_kelas=k.id_kelas');
+        $this->db->join('guru g', 'n.id_guru=g.id');
         $query = $this->db->get();
         return $query->result();
     }

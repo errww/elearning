@@ -33,3 +33,18 @@ body {
 .txt-color-goldenrod{
 	color: #e4b122;
 }
+
+.img-circle{
+
+	border-radius: 50%;
+}
+
+.ratio {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    /*height: 0;*/
+    /*padding-bottom: 100%;*/
+    position: relative;
+    width: 40%;
+}

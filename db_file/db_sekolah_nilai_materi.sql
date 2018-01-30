@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 22, 2018 at 11:35 AM
+-- Generation Time: Jan 30, 2018 at 03:58 AM
 -- Server version: 10.1.10-MariaDB
 -- PHP Version: 5.6.19
 
@@ -38,7 +38,7 @@ CREATE TABLE `admin` (
 
 INSERT INTO `admin` (`id`, `username`, `password`) VALUES
 (1, '1', '$2y$10$b6JskNdwYq6ekZfQRuh.M.8E2K63fjVe.TF25pKUhQ3HlorFQJgki'),
-(2, '2', '$2y$10$hIyPyjZ0kuJtbDaACFtOyOi6vwMFYFJajC3kgnft3a0PMomxCoGgi'),
+(2, '123456', 'e10adc3949ba59abbe56e057f20f883e'),
 (3, '3', '3');
 
 -- --------------------------------------------------------
@@ -66,17 +66,21 @@ CREATE TABLE `guru` (
   `nama` varchar(100) NOT NULL,
   `nik` varchar(100) NOT NULL,
   `password` varchar(300) NOT NULL,
-  `profile` text NOT NULL,
-  `pesan` text NOT NULL
+  `telp` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `alamat` varchar(255) NOT NULL,
+  `tgl_lahir` varchar(255) DEFAULT NULL,
+  `jenis_kelamin` enum('L','P') NOT NULL,
+  `foto` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `guru`
 --
 
-INSERT INTO `guru` (`id`, `nama`, `nik`, `password`, `profile`, `pesan`) VALUES
-(45, 'Davit', '141201', '$2y$10$6WsJqBEyLnR8fft2lVsSm.Z4OV4f7gcLaZLWyW0i254.jH5gwLZS2', '', ''),
-(46, 'paijo', '898', '$2y$10$CRjxDqNh5.0wQNVE75TE2uYn6KqzbJaPNWAcUGOOK7iemKkdZ65Jm', '', '');
+INSERT INTO `guru` (`id`, `nama`, `nik`, `password`, `telp`, `email`, `alamat`, `tgl_lahir`, `jenis_kelamin`, `foto`) VALUES
+(45, 'Gurih Gurih nyoy', '123456', '$2y$10$vPFGmXT4niN5xyLtuW1x/OFTh7GDGcXVoxr4tyqN5sAn6Q.xf1mCW', '1234567890', 'ahaha@fjshjf.cc', 'Bantul,Yogyakarta. jl srandakan km 01', '30-04-1990', 'P', 'a5e964f72b3c63628325c56975a0b6f2.jpg'),
+(46, 'paijo', '898999', '$2y$10$s2VdHHM2IaygI9Iugb2fN.VzGYwrnkqR/Saa4fuVcRVk6I9GAR/2q', '', '', '', '2018-01-26', 'L', '');
 
 -- --------------------------------------------------------
 
@@ -98,6 +102,30 @@ INSERT INTO `guru_mapel` (`id_guru`, `id_mapel`) VALUES
 (45, 2),
 (45, 3),
 (45, 4);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `guru_pesan_informasi`
+--
+
+CREATE TABLE `guru_pesan_informasi` (
+  `id` int(11) NOT NULL,
+  `guru_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `isi` longtext,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `guru_pesan_informasi`
+--
+
+INSERT INTO `guru_pesan_informasi` (`id`, `guru_id`, `title`, `isi`, `created_at`) VALUES
+(53, 45, 'Seminar Pemograman Web', '<p>Bagi rekan rekan yang inggin mengikuti seminar silahkan daftar melalui ketua kelas</p>\n', '2018-01-29 15:48:21'),
+(54, 45, 'Pengganti Kelas Kosong', '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse maximus posuere sapien, vel commodo ante feugiat non. Morbi sagittis in libero non euismod. Nulla nisi urna, consequat quis magna quis, feugiat cursus magna. Pellentesque pretium mauris lorem. Aliquam vulputate accumsan augue, et bibendum mi pretium id. Maecenas dictum turpis quam, ac posuere diam porta vel. Quisque suscipit commodo gravida. Aliquam ac enim a tellus tincidunt iaculis. Fusce vulputate in metus at consectetur.</p>\n', '2018-01-29 15:49:27'),
+(55, 45, 'Perubahan Materi Kelas 1', '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse maximus posuere sapien, vel commodo ante feugiat non. Morbi sagittis in libero non euismod. Nulla nisi urna, consequat quis magna quis, feugiat cursus magna. Pellentesque pretium mauris lorem. Aliquam vulputate accumsan augue, et bibendum mi pretium id. Maecenas dictum turpis quam, ac posuere diam porta vel. Quisque suscipit commodo gravida. Aliquam ac enim a tellus tincidunt iaculis. Fusce vulputate in metus at consectetur.</p>\n', '2018-01-29 15:49:37'),
+(56, 45, 'Himpunan Mahasiswa T1', '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse maximus posuere sapien, vel commodo ante feugiat non. Morbi sagittis in libero non euismod. Nulla nisi urna, consequat quis magna quis, feugiat cursus magna. Pellentesque pretium mauris lorem. Aliquam vulputate accumsan augue, et bibendum mi pretium id. Maecenas dictum turpis quam, ac posuere diam porta vel. Quisque suscipit commodo gravida. Aliquam ac enim a tellus tincidunt iaculis. Fusce vulputate in metus at consectetur.</p>\n', '2018-01-29 15:49:50');
 
 -- --------------------------------------------------------
 
@@ -166,7 +194,7 @@ CREATE TABLE `kelas` (
 --
 
 INSERT INTO `kelas` (`id_kelas`, `nama_kelas`, `jadwal`) VALUES
-(10, '1 A', ''),
+(10, '1 A', '<p>njjnjnjnjnjnjnj</p>\r\n'),
 (11, '2b', '');
 
 -- --------------------------------------------------------
@@ -198,7 +226,10 @@ INSERT INTO `mapel` (`id`, `mapel`) VALUES
 CREATE TABLE `materi` (
   `id` int(11) NOT NULL,
   `file` varchar(300) NOT NULL,
-  `id_guru` int(11) NOT NULL
+  `id_guru` int(11) NOT NULL,
+  `mapel_id` int(11) NOT NULL,
+  `kelas_id` int(11) NOT NULL,
+  `judul` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -210,7 +241,10 @@ CREATE TABLE `materi` (
 CREATE TABLE `nilai` (
   `id` int(11) NOT NULL,
   `file` varchar(300) NOT NULL,
-  `id_guru` int(11) NOT NULL
+  `id_guru` int(11) NOT NULL,
+  `mapel_id` int(11) NOT NULL,
+  `kelas_id` int(11) NOT NULL,
+  `judul` varchar(225) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -252,7 +286,8 @@ CREATE TABLE `thajaran` (
 --
 
 INSERT INTO `thajaran` (`id`, `thajaran`) VALUES
-(15, '2010/11');
+(15, '2010/2011'),
+(16, '2011/2012');
 
 --
 -- Indexes for dumped tables
@@ -283,6 +318,12 @@ ALTER TABLE `guru`
 ALTER TABLE `guru_mapel`
   ADD KEY `id_guru` (`id_guru`),
   ADD KEY `id_mapel` (`id_mapel`);
+
+--
+-- Indexes for table `guru_pesan_informasi`
+--
+ALTER TABLE `guru_pesan_informasi`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `hari`
@@ -352,6 +393,11 @@ ALTER TABLE `books`
 ALTER TABLE `guru`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 --
+-- AUTO_INCREMENT for table `guru_pesan_informasi`
+--
+ALTER TABLE `guru_pesan_informasi`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+--
 -- AUTO_INCREMENT for table `hari`
 --
 ALTER TABLE `hari`
@@ -375,12 +421,12 @@ ALTER TABLE `mapel`
 -- AUTO_INCREMENT for table `materi`
 --
 ALTER TABLE `materi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `nilai`
 --
 ALTER TABLE `nilai`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 --
 -- AUTO_INCREMENT for table `siswa`
 --
@@ -390,7 +436,7 @@ ALTER TABLE `siswa`
 -- AUTO_INCREMENT for table `thajaran`
 --
 ALTER TABLE `thajaran`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

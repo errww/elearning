@@ -53,37 +53,5 @@ class Admin_model extends CI_Model
         }
     }
 	 
-    public function get_all_books()
-    {   
-        $this->db->from('books');
-        $query=$this->db->get();
-        return $query->result();
-    }
- 
-    public function get_by_id($id)
-    {   $this->db->select('*');
-        $this->db->from('books');
-        $this->db->where('book_id',$id);
-        $query = $this->db->get();
-        //echo $this->db->last_query();
-        return $query->row();
-    }
- 
-    public function book_add($data)
-    {
-        $this->db->insert('books' ,$data);
-        return $this->db->insert_id();
-    }
- 
-    public function book_update($where, $data)
-    {
-        $this->db->update('books', $data, $where);
-        return $this->db->affected_rows();
-    }
- 
-    public function delete_by_id($id)
-    {
-        $this->db->where('book_id', $id);
-        $this->db->delete('books');
-    }
+   
 }?>

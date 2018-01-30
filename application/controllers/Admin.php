@@ -20,10 +20,10 @@ class Admin extends CI_Controller
 
     public function index()
     {
+        $this->cek_session();
         $this->load->model('private/admin_model');
         $this->load->model('private/thajaran_model');
-        $this->cek_session();
-        $data['books']    = $this->admin_model->get_all_books();
+        
         $data['thajaran'] = $this->thajaran_model->get_all_thajaran();
         $data['content']  = 'content/private/dashboard';
         $this->load->view('layout/header/private/header');
@@ -136,37 +136,45 @@ class Admin extends CI_Controller
         $this->load->view('layout/footer/private/footer');
     }
 
-    public function cek()
-    {
-        $this->load->model('private/admin_model');
 
-        $this->form_validation->set_rules('username', 'Username', 'required|max_length[128]');
-        $this->form_validation->set_rules('password', 'Password', 'required|max_length[32]');
+    /**
+     * [auth_role_siswa description]
+     * @author [acil]
+     * @return [type] [description]
+     */
+    public function auth_role_siswa(){
 
-        if ($this->form_validation->run() == false) {
+        $this->form_validation->set_rules('nis', 'NIS', 'required|max_length[100]');
+        $this->form_validation->set_rules('password', 'Password', 'required|max_length[100]');
+       
+
+        if($this->form_validation->run() == false){
 
             $this->output
             ->set_status_header(500)
             ->set_content_type('application/json')
             ->set_output(json_encode(array('error' => validation_errors())));
 
-        } else {
-            $username = $this->input->post('username');
+        }else{
+
+
+            $nis = $this->input->post('nis');
             $password = $this->input->post('password');
 
-            $result = $this->admin_model->loginMe($username, $password);
+            $result = $this->siswa_model->loginMe($nis, $password);
 
             if (count($result) > 0) {
                 foreach ($result as $res) {
                     $sessionArray = array(
-                        'id'       => $res->username,
-                        'password' => $res->password,
-                        'level'    => 'superadmin',
+                        'id'       => $res->nis_siswa,
+                        'name'     => $res->nama_siswa,
+                        'level'    => 'siswa',
+                        'is_login' => TRUE
                         );
 
                     $this->session->set_userdata($sessionArray);
 
-                    $url = base_url().'admin';
+                    $url = base_url();
 
                     $this->output
                     ->set_status_header(200)
@@ -174,16 +182,77 @@ class Admin extends CI_Controller
                     ->set_output(json_encode(array('redirect' => $url)));
                 }
             } else {
-                
-                //$this->session->set_flashdata('error', 'Email or password mismatch');
 
                 $this->output
-                    ->set_status_header(500)
-                    ->set_content_type('application/json')
-                    ->set_output(json_encode(array('error' => 'Credential salah')));
+                ->set_status_header(500)
+                ->set_content_type('application/json')
+                ->set_output(json_encode(array('error' => 'Credential salah')));
             }
         }
+
+
     }
+
+    /**
+     * [auth_role_admin for guru]
+     * @return [type] [description]
+     */
+    public function auth_role_guru(){
+
+        $this->form_validation->set_rules('nik', 'NIP', 'required|max_length[100]');
+        $this->form_validation->set_rules('password', 'Password', 'required|max_length[100]');
+
+        if($this->form_validation->run() == false){
+
+            $this->output
+            ->set_status_header(500)
+            ->set_content_type('application/json')
+            ->set_output(json_encode(array('error' => validation_errors())));
+
+        }else{
+
+
+            $nik = $this->input->post('nik');
+            $password = $this->input->post('password');
+
+            $result = $this->guru_model->loginMe($nik, $password);
+
+            if (count($result) > 0) {
+                foreach ($result as $res) {
+                    $sessionArray = array(
+                        'id'       => $res->nik,
+                        'name'     => $res->nama,
+                        'level'    => $res->level,
+                        'is_login' => TRUE
+                        );
+
+                    $this->session->set_userdata($sessionArray);
+
+                    //role for level
+                    if($res->level == 'guru'){
+                         $url = site_url().'guru';
+                    }
+
+                    if($res->level == 'admin'){
+                        $url = site_url().'admin';
+                    }
+                   
+
+                    $this->output
+                    ->set_status_header(200)
+                    ->set_content_type('application/json')
+                    ->set_output(json_encode(array('redirect' => $url)));
+                }
+            } else {
+
+                $this->output
+                ->set_status_header(500)
+                ->set_content_type('application/json')
+                ->set_output(json_encode(array('error' => 'Credential salah')));
+            }
+        }
+
+    } 
 
     public function ajax_edit($id)
     {
@@ -195,7 +264,7 @@ class Admin extends CI_Controller
 
     public function cek_session()
     {
-        if ($this->session->userdata('level') !== 'superadmin') {
+        if ($this->session->userdata('level') !== 'admin') {
             return redirect("admin/login");
         }
     }
