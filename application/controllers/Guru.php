@@ -23,7 +23,7 @@ class Guru extends CI_Controller
         $id                 = $this->session->userdata('id');
         $data['nik']        = $this->session->userdata('nik');
         $data['nama']       = $this->session->userdata('nama');
-        $data['content']    = '';
+        $data['content']    = 'content/private/dashboard';
         $data['navigation'] = $this->uri->segment(1);
 
         $this->load->view('layout/header/private/header');
@@ -50,8 +50,6 @@ class Guru extends CI_Controller
         $this->cek_session();
 
         $id                 = $this->session->userdata('id');
-        // $data['nik']        = $this->session->userdata('nik');
-        // $data['nama']       = $this->session->userdata('nama');
         $data['navigation'] = $this->uri->segment(1);
         $data['pesan']      = $this->guru_model->get_where('guru_pesan_informasi', '*' ,'guru_id',$id);
         $data['content']    = 'content/private/gurupesan';
@@ -167,27 +165,16 @@ class Guru extends CI_Controller
     {
         $this->cek_session();
 
-        $id                 = $this->session->userdata('id');
-        //$data['nik']        = $this->session->userdata('nik');
-        //$data['nama']       = $this->session->userdata('nama');
+        $id_guru          = $this->session->userdata('id');
         $data['navigation'] = $this->uri->segment(1);
 
         $data['content']    = 'content/private/gurunilai';
-        $data['nilai']      = $this->guru_model->get_nilai_by_guru();
+        $data['nilai']      = $this->guru_model->get_nilai_by_guru($id_guru);
 
         $data['mapel']      = $this->db->get('mapel')->result_array();
-        $data['thajaran']   = $this->db->order_by('id','desc')->get('thajaran')->result_array();
+        $data['thajaran']   = $this->db->order_by('id_tahunajaran','desc')->get('tahunajaran')->result_array();
         $data['semester']   = $this->db->get('semester')->result_array();
-
-        //from david
-        // $data['id']         = $this->session->userdata('id');
-        // $data['nik']        = $this->session->userdata('nik');
-        // $data['nama']       = $this->session->userdata('nama');
-        // $data['navigation'] = $this->uri->segment(1);
-        // $data['kelas']    = $this->kelas_model->get_all_kelas();
-        // $data['content'] = 'content/private/gurunilai';
-        // $data['nilai']    = $this->guru_model->get_nilai();
-        // $data['mapel']    = $this->mapel_model->get_all_mapel();
+        $data['kelas']      = $this->db->get('kelas')->result_array();
 
 
         $this->load->view('layout/header/private/header');
@@ -209,6 +196,7 @@ class Guru extends CI_Controller
         $this->form_validation->set_rules('mapel', 'Mapel', 'required');
         $this->form_validation->set_rules('thajaran', 'Tahun Ajaran', 'required');
         $this->form_validation->set_rules('semester', 'Semester', 'required');
+        $this->form_validation->set_rules('kelas', 'Kelas', 'required');
 
         if($this->form_validation->run() === false){
 
@@ -226,6 +214,7 @@ class Guru extends CI_Controller
                 'id_mapel' => $this->input->post('mapel'),
                 'id_tahunajaran' => $this->input->post('thajaran'),
                 'semester' => $this->input->post('semester'), 
+                'id_kelas' => $this->input->post('kelas'), 
                 );
 
                 //save into database
@@ -262,7 +251,7 @@ class Guru extends CI_Controller
 
             //upload configuration
             $config['upload_path']   = './assets/file_nilai/';
-            $config['allowed_types'] = 'gif|jpg|png|pdf';
+            $config['allowed_types'] = 'xls|xlsx|pdf';
             $config['max_size']      = '2048';
             $config['encrypt_name'] = TRUE;
             $this->load->library('upload', $config);
@@ -276,7 +265,7 @@ class Guru extends CI_Controller
                 
                 $data = array('file' => $uploadedFile);
 
-                $this->db->where('id', $id);
+                $this->db->where('id_nilai', $id);
                 $this->db->update('nilai', $data);
 
                 $this->output
@@ -332,7 +321,7 @@ class Guru extends CI_Controller
     public function ajax_nilai_edit($id)
     {
 
-        $data = $this->db->where('id',$id)->get('nilai')->row();
+        $data = $this->db->where('id_nilai',$id)->get('nilai')->row();
         echo json_encode($data);
     }
 
@@ -344,9 +333,10 @@ class Guru extends CI_Controller
             'id_mapel' => $this->input->post('mapel'),
             'id_tahunajaran' => $this->input->post('thajaran'),
             'semester' => $this->input->post('semester'),
+            'id_kelas' => $this->input->post('kelas'),
             );
 
-         $this->db->where('id', $id);
+         $this->db->where('id_nilai', $id);
          $this->db->update('nilai', $data);
 
         echo json_encode(array("status" => true));
@@ -364,157 +354,14 @@ class Guru extends CI_Controller
 
         $this->cek_session();
 
-        $this->db->where('id', $id);
+        $this->db->where('id_nilai', $id);
         $this->db->delete('nilai');
+
+        echo json_encode(array("status" => true));
 
     }
 
-    // public function nilai_add()
-    // {
-        
-    //     $file_element_name = 'userfile';
-
-
-    //     $config['upload_path'] = './uploads/';
-    //     $config['allowed_types'] = 'gif|jpg|png|doc|txt|xls|';
-    //     $config['max_size'] = 1024 * 8;
-    //     $config['encrypt_name'] = TRUE;
-
-    //      $this->load->library('upload', $config);
- 
-    //     if (!$this->upload->do_upload($file_element_name))
-    //     {
-    //         $status = 'error';
-    //         $msg = $this->upload->display_errors('', '');
-    //     }
-    //     else
-    //     {
-    //         $data = $this->upload->data();
-    //                 $data_nilai = array(
-    //                 'file' =>  $data['file_name'],
-    //                 'id_guru' => $this->input->post('id_guru'),
-    //                 'mapel_id' => $this->input->post('mapel_id'),
-    //                 'kelas_id' => $this->input->post('kelas_id'),
-    //                 'judul' => $this->input->post('judul'),
-    //                 );
-        
-    //         $file_id  = $this->nilai_model->nilai_add($data_nilai);
-
-    //         if($file_id)
-    //         {
-    //             $status = "success";
-    //             $msg = "File successfully uploaded";
-    //         }
-    //         else
-    //         {
-    //             unlink($data['full_path']);
-    //             $status = "error";
-    //             $msg = "Something went wrong when saving the file, please try again.";
-    //         }
-    //     }
-    //     @unlink($_FILES[$file_element_name]);
-
-
-
-  
-    //     echo json_encode(array("status" => $data, "msg" =>$msg));
-
-    // }
-
-
-    // public function nilai_delete($id){
-
-        
-    //     $this->nilai_model->delete_nilai($id);
-    //     echo json_encode(array("status" => true));
-
-    // }
-    
-
-
-
-    //  public function materi()
-    // {
-    //     $this->cek_session();
-    //     $data['id']         = $this->session->userdata('id');
-    //     $data['nik']        = $this->session->userdata('nik');
-    //     $data['nama']       = $this->session->userdata('nama');
-    //     $data['navigation'] = $this->uri->segment(1);
-    //     $data['kelas']    = $this->kelas_model->get_all_kelas();
-    //     $data['content'] = 'content/private/gurumateri';
-    //     $data['materi']    = $this->guru_model->get_materi();
-    //     $data['mapel']    = $this->mapel_model->get_all_mapel();
-
-    //     $this->load->view('layout/header/private/header');
-    //     $this->load->view('content/private/main', $data);
-    //     $this->load->view('layout/footer/private/footer');
-    // }
-
-
-
-
-
-    //  public function materi_add()
-    // {
-        
-    //     $file_element_name = 'userfile';
-
-
-    //     $config['upload_path'] = './uploads/';
-    //     $config['allowed_types'] = 'gif|jpg|png|doc|txt|xls|';
-    //     $config['max_size'] = 1024 * 8;
-    //     $config['encrypt_name'] = TRUE;
-
-    //      $this->load->library('upload', $config);
- 
-    //     if (!$this->upload->do_upload($file_element_name))
-    //     {
-    //         $status = 'error';
-    //         $msg = $this->upload->display_errors('', '');
-    //     }
-    //     else
-    //     {
-    //         $data = $this->upload->data();
-    //                 $data_nilai = array(
-    //                 'file' =>  $data['file_name'],
-    //                 'id_guru' => $this->input->post('id_guru'),
-    //                 'mapel_id' => $this->input->post('mapel_id'),
-    //                 'kelas_id' => $this->input->post('kelas_id'),
-    //                 'judul' => $this->input->post('judul'),
-    //                 );
-        
-    //         $file_id  = $this->nilai_model->materi_add($data_nilai);
-
-    //         if($file_id)
-    //         {
-    //             $status = "success";
-    //             $msg = "File successfully uploaded";
-    //         }
-    //         else
-    //         {
-    //             unlink($data['full_path']);
-    //             $status = "error";
-    //             $msg = "Something went wrong when saving the file, please try again.";
-    //         }
-    //     }
-    //     @unlink($_FILES[$file_element_name]);
-
-
-
-  
-    //     echo json_encode(array("status" => $data, "msg" =>$msg));
-
-    // }
-
-
-    // public function materi_delete($id){
-
-        
-    //     $this->nilai_model->delete_materi($id);
-    //     echo json_encode(array("status" => true));
-
-    // }
-
+   
 
     /**
      * [download_file_nilai description]
@@ -528,7 +375,11 @@ class Guru extends CI_Controller
         force_download('assets/file_nilai/'.$file, NULL);
     }
 
-
+    /**
+     * [profile_update description]
+     * @author [acil]
+     * @return [type] [description]
+     */
     public function profile_update()
     {
         $this->cek_session();
@@ -775,5 +626,283 @@ private function hash_password($password)
 {
     return password_hash($password, PASSWORD_BCRYPT);
 }
+
+
+
+    /**
+     * [materi show data]
+     * @author [acil] 
+     * @return [type] [description]
+     */
+    public function materi()
+    {
+        $this->cek_session();
+
+        $id_guru          = $this->session->userdata('id');
+        $data['navigation'] = $this->uri->segment(1);
+
+        $data['content']    = 'content/private/gurumateri';
+        $data['materi']     = $this->guru_model->get_materi_by_guru($id_guru);
+
+        $data['mapel']      = $this->db->get('mapel')->result_array();
+        $data['thajaran']   = $this->db->order_by('id_tahunajaran','desc')->get('tahunajaran')->result_array();
+        $data['kelas']      = $this->db->get('kelas')->result_array();
+        $data['semester']   = $this->db->get('semester')->result_array();
+
+
+        $this->load->view('layout/header/private/header');
+        $this->load->view('content/private/main', $data);
+        $this->load->view('layout/footer/private/footer');
+    }
+
+
+    /**
+     * [materi_add save materi]
+     * @author [acil] 
+     * @return [type] [description]
+     */
+    public function materi_add()
+    {
+        $this->cek_session();
+
+        $this->form_validation->set_rules('title', 'Title', 'required|max_length[255]');
+        $this->form_validation->set_rules('mapel', 'Mapel', 'required');
+        $this->form_validation->set_rules('thajaran', 'Tahun Ajaran', 'required');
+        $this->form_validation->set_rules('semester', 'Semester', 'required');
+        $this->form_validation->set_rules('kelas', 'Kelas', 'required');
+
+        if($this->form_validation->run() === false){
+
+            $this->output
+            ->set_status_header(500)
+            ->set_content_type('application/json')
+            ->set_output(json_encode(array('error' => validation_errors())));
+
+        }else{
+
+
+            $data = array(
+                'nama_materi' => $this->input->post('title'),
+                'id_guru' => $this->session->userdata('id'),
+                'id_mapel' => $this->input->post('mapel'),
+                'id_tahunajaran' => $this->input->post('thajaran'),
+                'semester' => $this->input->post('semester'), 
+                'id_kelas' => $this->input->post('kelas'), 
+                );
+
+                //save into database
+            $this->db->insert('materi',$data);
+
+            $this->output
+            ->set_status_header(200)
+            ->set_content_type('application/json')
+            ->set_output(json_encode(array('success' => 'Berhasil insert data !')));
+
+        }
+    }
+
+
+    /**
+     * [materi_file_add]
+     * @author [acil]
+     * @return [type] [description]
+     */
+    public function materi_file_add($id){
+
+        $this->cek_session();
+
+        $this->form_validation->set_rules('file', '', 'callback_file_check');
+
+        if($this->form_validation->run() === false){
+
+            $this->output
+            ->set_status_header(500)
+            ->set_content_type('application/json')
+            ->set_output(json_encode(array('error' => validation_errors())));
+
+        }else{
+
+            //upload configuration
+            $config['upload_path']   = './assets/file_materi/';
+            $config['allowed_types'] = 'xls|xlsx|pdf';
+            $config['max_size']      = '2048';
+            $config['encrypt_name'] = TRUE;
+            $this->load->library('upload', $config);
+
+            //upload file to directory
+            if($this->upload->do_upload('file')){
+                $uploadData = $this->upload->data();
+                $uploadedFile = $uploadData['file_name'];
+
+                //insert file information into the database
+                
+                $data = array('file_materi' => $uploadedFile);
+
+                $this->db->where('id_materi', $id);
+                $this->db->update('materi', $data);
+
+                $this->output
+                ->set_status_header(200)
+                ->set_content_type('application/json')
+                ->set_output(json_encode(array('success' => 'Berhasil upload !')));
+            }else{
+                $this->output
+                ->set_status_header(500)
+                ->set_content_type('application/json')
+                ->set_output(json_encode(array('error' => $this->upload->display_errors())));
+
+            }
+
+        }
+
+    }
+
+
+    /**
+     * [ajax_materi_edit description]
+     * @author [acil]
+     * @param  [type] $id [description]
+     * @return [type]     [description]
+     */
+    
+    public function ajax_materi_edit($id)
+    {
+
+        $data = $this->db->where('id_materi',$id)->get('materi')->row();
+        echo json_encode($data);
+    }
+
+    public function materi_update(){
+
+        $id = $this->input->post('id_materi');
+        $data = array(
+            'nama_materi' => $this->input->post('title'),
+            'id_mapel' => $this->input->post('mapel'),
+            'id_tahunajaran' => $this->input->post('thajaran'),
+            'semester' => $this->input->post('semester'),
+            'id_kelas' => $this->input->post('kelas'),
+            );
+
+         $this->db->where('id_materi', $id);
+         $this->db->update('materi', $data);
+
+        echo json_encode(array("status" => true));
+
+
+    }
+
+    /**
+     * [materi_delete]
+     * @author [acil] 
+     * @param  [type] $id [description]
+     * @return [type]     [description]
+     */
+    public function materi_delete($id){
+
+        $this->cek_session();
+
+        $this->db->where('id_materi', $id);
+        $this->db->delete('materi');
+
+        echo json_encode(array("status" => true));
+
+    }
+
+   
+
+    /**
+     * [download_file_materi description]
+     * @author [acil] 
+     * @param  [type] $file [description]
+     * @return [type]       [description]
+     */
+    public function download_file_materi($file){
+
+        $this->load->helper('download');
+        force_download('assets/file_materi/'.$file, NULL);
+    }
+
+
+    //  public function materi()
+    // {
+    //     $this->cek_session();
+    //     $data['id']         = $this->session->userdata('id');
+    //     $data['nik']        = $this->session->userdata('nik');
+    //     $data['nama']       = $this->session->userdata('nama');
+    //     $data['navigation'] = $this->uri->segment(1);
+    //     $data['kelas']    = $this->kelas_model->get_all_kelas();
+    //     $data['content'] = 'content/private/gurumateri';
+    //     $data['materi']   = $this->guru_model->get_materi();
+    //     $data['mapel']    = $this->mapel_model->get_all_mapel();
+
+    //     $this->load->view('layout/header/private/header');
+    //     $this->load->view('content/private/main', $data);
+    //     $this->load->view('layout/footer/private/footer');
+    // }
+
+
+
+
+
+    //  public function materi_add()
+    // {
+        
+    //     $file_element_name = 'userfile';
+
+
+    //     $config['upload_path'] = './uploads/';
+    //     $config['allowed_types'] = 'gif|jpg|png|doc|txt|xls|';
+    //     $config['max_size'] = 1024 * 8;
+    //     $config['encrypt_name'] = TRUE;
+
+    //      $this->load->library('upload', $config);
+ 
+    //     if (!$this->upload->do_upload($file_element_name))
+    //     {
+    //         $status = 'error';
+    //         $msg = $this->upload->display_errors('', '');
+    //     }
+    //     else
+    //     {
+    //         $data = $this->upload->data();
+    //                 $data_nilai = array(
+    //                 'file' =>  $data['file_name'],
+    //                 'id_guru' => $this->input->post('id_guru'),
+    //                 'mapel_id' => $this->input->post('mapel_id'),
+    //                 'kelas_id' => $this->input->post('kelas_id'),
+    //                 'judul' => $this->input->post('judul'),
+    //                 );
+        
+    //         $file_id  = $this->nilai_model->materi_add($data_nilai);
+
+    //         if($file_id)
+    //         {
+    //             $status = "success";
+    //             $msg = "File successfully uploaded";
+    //         }
+    //         else
+    //         {
+    //             unlink($data['full_path']);
+    //             $status = "error";
+    //             $msg = "Something went wrong when saving the file, please try again.";
+    //         }
+    //     }
+    //     @unlink($_FILES[$file_element_name]);
+
+
+
+  
+    //     echo json_encode(array("status" => $data, "msg" =>$msg));
+
+    // }
+
+
+    // public function materi_delete($id){
+
+        
+    //     $this->nilai_model->delete_materi($id);
+    //     echo json_encode(array("status" => true));
+
+    // }
 
 }

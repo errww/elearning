@@ -166,7 +166,8 @@ class Admin extends CI_Controller
             if (count($result) > 0) {
                 foreach ($result as $res) {
                     $sessionArray = array(
-                        'id'       => $res->nis_siswa,
+                        'id'       => $res->id, 
+                        'nis'      => $res->nis_siswa,
                         'name'     => $res->nama_siswa,
                         'level'    => 'siswa',
                         'is_login' => TRUE
@@ -220,7 +221,8 @@ class Admin extends CI_Controller
             if (count($result) > 0) {
                 foreach ($result as $res) {
                     $sessionArray = array(
-                        'id'       => $res->nik,
+                        'id'       => $res->id,
+                        'nik'      => $res->nik,
                         'name'     => $res->nama,
                         'level'    => $res->level,
                         'is_login' => TRUE

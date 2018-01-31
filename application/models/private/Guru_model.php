@@ -46,33 +46,37 @@ class Guru_model extends CI_Model
         return $query->result();
     }
 
-    public function get_nilai_by_guru()
+    /**
+     * [get_nilai_by_guru description]
+     * @author [acil]
+     * @return [type] [description]
+     */
+    public function get_nilai_by_guru($id_guru)
     {
 
-        $this->db->select('nilai.id,
+        $this->db->select('nilai.id_nilai,
                            nilai.title , 
                            nilai.file,
                            guru.nama, 
-                           thajaran.thajaran , 
-                           mapel.mapel , 
+                           tahunajaran.tahun , 
+                           mapel.nama_mapel , 
+                           kelas.nama_kelas,
                            semester.semester');
         $this->db->from('nilai');
+        $this->db->where('nilai.id_guru',$id_guru);
         $this->db->join('guru', 'guru.id = nilai.id_guru');
-        $this->db->join('thajaran','thajaran.id = nilai.id_tahunajaran');
-        $this->db->join('mapel', 'mapel.id = nilai.id_mapel');
-        $this->db->join('semester', 'semester.id = nilai.semester');
+        $this->db->join('tahunajaran','tahunajaran.id_tahunajaran = nilai.id_tahunajaran');
+        $this->db->join('mapel', 'mapel.id_mapel = nilai.id_mapel');
+        $this->db->join('kelas', 'kelas.id_kelas = nilai.id_kelas');
+        $this->db->join('semester', 'semester.id_semester = nilai.semester');
 
-        $this->db->order_by('id','desc');
+        $this->db->order_by('nilai.id_nilai','desc');
 
-
-        // $this->db->select('n.id as idnilai, judul,nama_kelas,mapel,nama,file');
-        // $this->db->from('nilai n');
-        // $this->db->join('mapel m', 'n.mapel_id=m.id');
-        // $this->db->join('kelas k', 'n.kelas_id=k.id_kelas');
-        // $this->db->join('guru g', 'n.id_guru=g.id');
         $query = $this->db->get();
         return $query->result();
     }
+
+
 
     public function get_nilai(){
 
@@ -85,6 +89,32 @@ class Guru_model extends CI_Model
         return $query->result();
     }
 
+
+    public function get_materi_by_guru($id_guru){
+
+        $this->db->select('materi.id_materi,
+                           materi.nama_materi,
+                           materi.tgl_upload,
+                           materi.file_materi,
+                           materi.tipe_materi,
+                           guru.nama, 
+                           mapel.nama_mapel ,
+                           tahunajaran.tahun , 
+                           kelas.nama_kelas, 
+                           semester.semester');
+        $this->db->from('materi');
+        $this->db->join('guru', 'guru.id = materi.id_guru');
+        $this->db->join('mapel', 'mapel.id_mapel = materi.id_mapel');
+        $this->db->join('tahunajaran','tahunajaran.id_tahunajaran = materi.id_tahunajaran');
+        $this->db->join('kelas', 'kelas.id_kelas = materi.id_kelas');
+        $this->db->join('semester', 'semester.id_semester = materi.semester');
+        $this->db->where('materi.id_guru',$id_guru);
+
+        $this->db->order_by('materi.id_materi','desc');
+
+        $query = $this->db->get();
+        return $query->result();
+    }
 
 
     public function get_materi()
