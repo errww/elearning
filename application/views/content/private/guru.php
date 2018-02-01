@@ -7,14 +7,16 @@
 <table id="table_id" class="table table-striped table-bordered" cellspacing="0" width="100%">
   <thead>
     <tr>
+      <th>No</th>
       <th>NIK guru</th>
       <th>Nama guru</th>
       <th style="width:125px;">Action</p></th>
     </tr>
   </thead>
   <tbody>
-    <?php foreach($guru as $gurus){?>
+    <?php $i = 1; foreach($guru as $gurus){?>
     <tr>
+     <td><?php echo $i++;?></td>
      <td><?php echo $gurus->nik;?></td>
      <td><?php echo $gurus->nama;?></td>
      <td>
@@ -27,6 +29,7 @@
 
 <tfoot>
   <tr>
+    <th>No</th>
     <th>NIK guru</th>
     <th>Nama guru</th>
     <th>Action</th>
@@ -120,7 +123,7 @@
           dataType: "JSON",
           success: function(data)
           {
-           
+
            location.reload();
          },
          error: function (jqXHR, textStatus, errorThrown)
@@ -140,29 +143,29 @@
   <div class="modal fade" id="modal_form" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header bg-primary">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h3 class="modal-title">Guru Form</h3>
+          <h4 class="modal-title">Guru Form</h4>
         </div>
-        <div class="modal-body form">
+        <div class="modal-body form bg-primary">
           <form action="#" id="form" class="form-horizontal">
             <input type="hidden" value="" name="id_guru"/>
             <div class="form-body">
-              
+
               <div class="form-group">
-                <label class="control-label col-md-3">NIK guru</label>
+                <label class="control-label col-md-3">NIK Guru</label>
                 <div class="col-md-9">
-                  <input name="nik" placeholder="NIk guru" value="" class="form-control" type="number" id="Nisguru" >
+                  <input name="nik" placeholder="NIK Guru" value="" class="form-control" type="number" id="Nisguru" >
                 </div>
               </div>
               <div class="form-group">
-                <label class="control-label col-md-3">Nama guru</label>
+                <label class="control-label col-md-3">Nama Guru</label>
                 <div class="col-md-9">
                   <input name="nama" placeholder="Nama guru" class="form-control" type="text">
                 </div>
               </div>
               <div class="form-group">
-                <label class="control-label col-md-3">Password guru</label>
+                <label class="control-label col-md-3">Password Guru</label>
                 <div class="col-md-9">
                   <input name="pass" placeholder="Password guru" class="form-control" type="password">
                 </div>
@@ -170,22 +173,25 @@
               <div class="form-group">
                 <label class="control-label col-md-3">Mapel</label>
                 <div class="col-md-9">
-                 <select name="mapel[]" class="form-control" multiple>
-                  <?php foreach($mapel as $row):?>
-                   <option value="<?php echo $row->id ?>"><?php echo $row->mapel ?></option>
-                 <?php endforeach;?>
-               </select> 
-             </div>
-           </div>        
-         </div>
-       </form>
-     </div>
-     <div class="modal-footer">
-      <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Save</button>
-      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-    </div>
-  </div><!-- /.modal-content -->
-</div><!-- /.modal-dialog -->
+                  <code>* ctrl + klik untuk memilih lebih dari satu mapel.</code>
+                  <br>
+                  <br>
+                  <select name="mapel[]" class="form-control" multiple>
+                    <?php foreach($mapel as $row):?>
+                     <option value="<?php echo $row->id_mapel ?>"><?php echo $row->nama_mapel ?></option>
+                   <?php endforeach;?>
+                 </select> 
+               </div>
+             </div>        
+           </div>
+         </form>
+       </div>
+       <div class="modal-footer bg-primary">
+        <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <!-- End Bootstrap modal -->
 

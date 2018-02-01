@@ -146,7 +146,7 @@ class Admin extends CI_Controller
 
         $this->form_validation->set_rules('nis', 'NIS', 'required|max_length[100]');
         $this->form_validation->set_rules('password', 'Password', 'required|max_length[100]');
-       
+
 
         if($this->form_validation->run() == false){
 
@@ -232,63 +232,63 @@ class Admin extends CI_Controller
 
                     //role for level
                     if($res->level == 'guru'){
-                         $url = site_url().'guru';
-                    }
+                       $url = site_url().'guru';
+                   }
 
-                    if($res->level == 'admin'){
-                        $url = site_url().'admin';
-                    }
-                   
-
-                    $this->output
-                    ->set_status_header(200)
-                    ->set_content_type('application/json')
-                    ->set_output(json_encode(array('redirect' => $url)));
+                   if($res->level == 'admin'){
+                    $url = site_url().'admin';
                 }
-            } else {
+
 
                 $this->output
-                ->set_status_header(500)
+                ->set_status_header(200)
                 ->set_content_type('application/json')
-                ->set_output(json_encode(array('error' => 'Credential salah')));
+                ->set_output(json_encode(array('redirect' => $url)));
             }
-        }
+        } else {
 
-    } 
-
-    public function ajax_edit($id)
-    {
-        $this->load->model('private/admin_model');
-        $data = $this->admin_model->get_by_id($id);
-
-        echo json_encode($data);
-    }
-
-    public function cek_session()
-    {
-        if ($this->session->userdata('level') !== 'admin') {
-            return redirect("admin/login");
+            $this->output
+            ->set_status_header(500)
+            ->set_content_type('application/json')
+            ->set_output(json_encode(array('error' => 'Credential salah')));
         }
     }
 
-    public function logout()
-    {
-        $this->session->sess_destroy();
-        redirect('admin/login');
+} 
 
-    }
+public function ajax_edit($id)
+{
+    $this->load->model('private/admin_model');
+    $data = $this->admin_model->get_by_id($id);
 
-    public function admin_add()
-    {
-        $this->load->model('private/admin_model');
-        $data = array(
-            'id'       => '2',
-            'username' => '2',
-            'password' => $this->hash_password('2'),
-            );
-        $this->admin_model->add_admin($data);
-        return 'success';
+    echo json_encode($data);
+}
+
+public function cek_session()
+{
+    if ($this->session->userdata('level') !== 'admin') {
+        return redirect("admin/login");
     }
+}
+
+public function logout()
+{
+    $this->session->sess_destroy();
+    redirect('admin/login');
+
+}
+
+public function admin_add()
+{
+    $this->load->model('private/admin_model');
+    $data = array(
+        'id'       => '2',
+        'username' => '2',
+        'password' => $this->hash_password('2'),
+        );
+    $this->admin_model->add_admin($data);
+    return 'success';
+}
 
     /*
     // ------------------ Private Shared Function -----------------------------------------------------
@@ -471,13 +471,24 @@ class Admin extends CI_Controller
     public function kelas_add()
     {
         $this->cek_session();
-        $this->load->model('private/kelas_model');
-        $data = array(
-            'nama_kelas' => $this->input->post('nama_kelas'),
-            'jadwal' => $this->input->post('txt1'),
-            );
-        $insert = $this->kelas_model->kelas_add($data);
-        echo json_encode(array("status" => true));
+        $this->form_validation->set_rules('nama_kelas','Nama Kelas','required');
+
+        if($this->form_validation->run() == false){
+
+            $this->output
+            ->set_status_header(500)
+            ->set_content_type('application/json')
+            ->set_output(json_encode(array('error' => validation_errors())));
+
+        }else{
+
+            $this->load->model('private/kelas_model');
+            $data = array(
+                'nama_kelas' => $this->input->post('nama_kelas'),
+                );
+            $insert = $this->kelas_model->kelas_add($data);
+            echo json_encode(array("status" => true));
+        }
     }
 
     public function ajax_kelas_edit($id)
@@ -491,13 +502,25 @@ class Admin extends CI_Controller
     public function kelas_update()
     {
         $this->cek_session();
-        $this->load->model('private/kelas_model');
-        $data = array(
-            'nama_kelas' => $this->input->post('nama_kelas'),
-            'jadwal' => $this->input->post('txt1'),
-            );
-        $this->kelas_model->kelas_update(array('id_kelas' => $this->input->post('id_kelas')), $data);
-        echo json_encode(array("status" => true));
+        
+        $this->form_validation->set_rules('nama_kelas','Nama Kelas','required');
+
+        if($this->form_validation->run() == false){
+
+            $this->output
+            ->set_status_header(500)
+            ->set_content_type('application/json')
+            ->set_output(json_encode(array('error' => validation_errors())));
+
+        }else{
+
+            $this->load->model('private/kelas_model');
+            $data = array(
+                'nama_kelas' => $this->input->post('nama_kelas')
+                );
+            $this->kelas_model->kelas_update(array('id_kelas' => $this->input->post('id_kelas')), $data);
+            echo json_encode(array("status" => true));
+        }
     }
 
     public function kelas_delete($id)
@@ -512,15 +535,33 @@ class Admin extends CI_Controller
     // ---------------------------- Thajaran Management Page -------------------------------------------
      */
 
+    /**
+     * [thajaran_add description]
+     * @author [acil]
+     * @return [type] [description]
+     */
     public function thajaran_add()
     {
         $this->cek_session();
-        $this->load->model('private/thajaran_model');
-        $data = array(
-            'thajaran' => $this->input->post('nama_thajaran'),
-            );
-        $insert = $this->thajaran_model->thajaran_add($data);
-        echo json_encode(array("status" => true));
+
+        $this->form_validation->set_rules('nama_thajaran','Tahun Ajaran', 'required');
+
+        if($this->form_validation->run() == false){
+
+            $this->output
+            ->set_status_header(500)
+            ->set_content_type('application/json')
+            ->set_output(json_encode(array('error' => validation_errors())));
+
+        }else{
+
+            $this->load->model('private/thajaran_model');
+            $data = array(
+                'tahun' => $this->input->post('nama_thajaran'),
+                );
+            $insert = $this->thajaran_model->thajaran_add($data);
+            echo json_encode(array("status" => true));
+        }
     }
 
     public function ajax_thajaran_edit($id)
@@ -534,12 +575,25 @@ class Admin extends CI_Controller
     public function thajaran_update()
     {
         $this->cek_session();
-        $this->load->model('private/thajaran_model');
-        $data = array(
-            'thajaran' => $this->input->post('nama_thajaran'),
-            );
-        $this->thajaran_model->thajaran_update(array('id' => $this->input->post('id_thajaran')), $data);
-        echo json_encode(array("status" => true));
+
+        $this->form_validation->set_rules('nama_thajaran','Tahun Ajaran', 'required');
+
+        if($this->form_validation->run() == false){
+
+            $this->output
+            ->set_status_header(500)
+            ->set_content_type('application/json')
+            ->set_output(json_encode(array('error' => validation_errors())));
+
+        }else{
+
+            $this->load->model('private/thajaran_model');
+            $data = array(
+                'tahun' => $this->input->post('nama_thajaran'),
+                );
+            $this->thajaran_model->thajaran_update(array('id_tahunajaran' => $this->input->post('id_thajaran')), $data);
+            echo json_encode(array("status" => true));
+        }
     }
 
     public function thajaran_delete($id)
