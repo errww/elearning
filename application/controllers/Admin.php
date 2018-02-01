@@ -166,7 +166,7 @@ class Admin extends CI_Controller
             if (count($result) > 0) {
                 foreach ($result as $res) {
                     $sessionArray = array(
-                        'id'       => $res->id, 
+                        'id'       => $res->id_siswa, 
                         'nis'      => $res->nis_siswa,
                         'name'     => $res->nama_siswa,
                         'level'    => 'siswa',
