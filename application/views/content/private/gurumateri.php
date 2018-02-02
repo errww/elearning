@@ -60,8 +60,6 @@
 </tfoot>
 </table>
 
-
-
 <!-- Bootstrap modal for add nilai -->
    <div class="modal fade" id="modal_form" role="dialog">
     <div class="modal-dialog">

@@ -8,8 +8,9 @@ class Admin extends CI_Controller
     public function __construct()
     {
         parent::__construct();
+        $this->load->database();
         $this->load->library(array('session','form_validation'));
-        $this->load->helper(array('html','form','login'));
+        $this->load->helper(array('html','form','login','file'));
         $this->load->model('private/guru_model');
         $this->load->model('private/siswa_model');
     }
@@ -232,10 +233,10 @@ class Admin extends CI_Controller
 
                     //role for level
                     if($res->level == 'guru'){
-                       $url = site_url().'guru';
-                   }
+                     $url = site_url().'guru';
+                 }
 
-                   if($res->level == 'admin'){
+                 if($res->level == 'admin'){
                     $url = site_url().'admin';
                 }
 
@@ -306,56 +307,169 @@ public function admin_add()
     public function guru_add()
     {
         $this->cek_session();
-        $pass   = $this->input->post('pass');
-        $mapels = $this->input->post('mapel');
+        
+        $this->form_validation->set_rules('nik', 'nik', 'required|max_length[100]');
+        $this->form_validation->set_rules('nama', 'nama', 'required|max_length[100]');
+        $this->form_validation->set_rules('level', 'Level', 'required');
+        $this->form_validation->set_rules('telp', 'No telp', 'required|numeric');
+        $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+        $this->form_validation->set_rules('alamat', 'Alamat', 'required');
+
+        $this->form_validation->set_rules('tgl', 'Tanggal', 'required|numeric|min_length[2]|max_length[2]');
+        $this->form_validation->set_rules('bln', 'Bulan', 'required|numeric|min_length[2]|max_length[2]');
+        $this->form_validation->set_rules('thn', 'Tahun', 'required|numeric|min_length[4]|max_length[4]');
+
+        $this->form_validation->set_rules('jenis_kelamin', 'Jenis Kelamin', 'required');
+
+        if($this->form_validation->run() == false){
+
+           $this->output
+           ->set_status_header(500)
+           ->set_content_type('application/json')
+           ->set_output(json_encode(array('error' => validation_errors())));
+
+       }else{
+
+        //$pass   = $this->input->post('pass');
+        //$mapels = $this->input->post('mapel');
 
         $data   = array(
             'nik'      => $this->input->post('nik'),
             'nama'     => $this->input->post('nama'),
-            'password' => $this->hash_password($this->input->post('pass')),
+            'level'    => $this->input->post('level'),
+            'telp'     => $this->input->post('telp'),
+            'email'     => $this->input->post('email'),
+            'alamat'    => $this->input->post('alamat'),
+            'tgl_lahir' => $this->input->post('tgl').'-'.$this->input->post('bln').'-'.$this->input->post('thn'),
             );
-        $insert = $this->guru_model->guru_add($data);
 
-        if ($mapels > 0) {
-            foreach ($mapels as $row) {
-                $data2 = array(
-                    'id_guru'  => $insert,
-                    'id_mapel' => $row,
-                    );
-                $this->guru_model->guru_mapel_add($data2);
-            }
+        //jika form password tidak kosong
+        if(!empty($this->input->post('pass'))){
+            //gunakan data dari post
+            $data['password']  = $this->hash_password($this->input->post('pass'));
+        }else{
+            //default password adalah nik
+            $data['password']  = $this->hash_password($this->input->post('nik'));  
         }
 
+        $insert = $this->guru_model->guru_add($data);
+
+        // if ($mapels > 0) {
+        //     foreach ($mapels as $row) {
+        //         $data2 = array(
+        //             'id_guru'  => $insert,
+        //             'id_mapel' => $row,
+        //             );
+        //         $this->guru_model->guru_mapel_add($data2);
+        //     }
+        // }
+
         echo json_encode(array("status" => true));
+
+
+    }
+}
+
+public function guru_file_add($id_guru){
+
+ $this->cek_session();
+
+ $this->form_validation->set_rules('file','','callback_image_file_check');
+
+ if($this->form_validation->run() == false){
+
+     $this->output
+     ->set_status_header(500)
+     ->set_content_type('application/json')
+     ->set_output(json_encode(array('error' => validation_errors())));
+
+ }else{
+
+        //configuration
+    $config['upload_path'] = './assets/avatar/';
+    $config['allowed_types'] = 'jpeg|jpg|png|gif';
+    $config['max_size'] = '2048';
+    $config['max_filename'] = '255';
+    $config['encrypt_name'] = TRUE;
+    $image_data = array();
+
+    $this->load->library('upload', $config);
+
+    if (!$this->upload->do_upload('file')) {
+
+        //if file upload failed then catch the errors
+
+        $this->output
+        ->set_status_header(500)
+        ->set_content_type('application/json')
+        ->set_output(json_encode(array('error' => $this->upload->display_errors() )));
+
+    } else {
+
+        //store the file info
+        $image_data = $this->upload->data();
+        $config['image_library'] = 'gd2';
+        $config['source_image'] = $image_data['full_path']; //get original image
+        $config['maintain_ratio'] = TRUE;
+        $config['width'] = 200;
+        $config['height'] = 200;
+        $this->load->library('image_lib', $config);
+
+        if (!$this->image_lib->resize()) {
+
+         $this->output
+         ->set_status_header(500)
+         ->set_content_type('application/json')
+         ->set_output(json_encode(array('error' => $this->image_lib->display_errors() )));
+
+     }
+
+
+    //get old file
+     $old_image_name    = $this->db->get_where('guru', array('id' => $id_guru))->row();
+    //remove
+     $file = $config['upload_path'].$old_image_name->foto;
+     if (file_exists($file)) {
+        unlink($file);
     }
 
-    /*
-    public function guru_add()
-    {
-    $pass   = $this->input->post('pass');
-    $mapels = $this->input->post('mapel');
-    $data   = array(
-    'nik'      => $this->input->post('nik'),
-    'nama'     => $this->input->post('nama'),
-    'password' => $this->hash_password($this->input->post('pass')),
-    );
-    // var_dump($mapels);
-    // die();
-    $insert = $this->guru_model->guru_add($data);
+    //update into db
+    $data = array('foto' => $image_data['file_name']);
+    $this->db->where('id', $id_guru);
+    $this->db->update('guru', $data);
 
-    if($mapels > 0) {
-    foreach ($mapels as $row) {
-    $data2 = array(
-    'id_guru'  => $insert,
-    'id_mapel' => $row,
-    );
-    $this->guru_model->guru_mapel_add($data2);
-    }
-    }
+}
 
-    //echo json_encode(array("status" => true));
-    }
+echo json_encode(array("status" => true));
+
+}   
+
+}
+
+    /**
+     * [image_file_check callback validation]
+     * @author [acil] 
+     * @param  [type] $str [description]
+     * @return [type]      [description]
      */
+    public function image_file_check($str){
+
+        if(isset($_FILES['file']['name']) && $_FILES['file']['name']!=""){
+
+            $allowed_mime_type_arr = array('image/jpg','image/jpeg','image/png');
+            $mime = get_mime_by_extension($_FILES['file']['name']);
+
+            if(in_array($mime, $allowed_mime_type_arr)){
+                return true;
+            }else{
+                $this->form_validation->set_message('image_file_check', 'Please select only jpg/jpeg/png file.');
+                return false;
+            }
+        }else{
+            $this->form_validation->set_message('image_file_check', 'Please choose a file to upload.');
+            return false;
+        }
+    }
 
     public function ajax_guru_edit($id)
     {

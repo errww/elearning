@@ -1,7 +1,14 @@
+<div class="row">
+  <div class="col-md-6">
+    <ol class="breadcrumb">
+      <li><a href="<?php echo site_url('admin');?>">Dashboard</a></li>
+      <li class="active">Data Guru</li>
+    </ol>
+  </div>
+</div>
 
-<center><h3>Data Guru</h3></center>
 <br />
-<button class="btn btn-success" onclick="add_guru()"><i class="glyphicon glyphicon-plus"></i> Add guru</button>
+<button class="btn btn-success btn-sm" onclick="add_guru()"><i class="fa fa-plus"></i> Tambah guru</button>
 <br />
 <br />
 <table id="table_id" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -10,6 +17,7 @@
       <th>No</th>
       <th>NIK guru</th>
       <th>Nama guru</th>
+      <th>Manage</th>
       <th style="width:125px;">Action</p></th>
     </tr>
   </thead>
@@ -20,21 +28,30 @@
      <td><?php echo $gurus->nik;?></td>
      <td><?php echo $gurus->nama;?></td>
      <td>
-      <button class="btn btn-warning" onclick="edit(<?php echo $gurus->id;?>)"><i class="glyphicon glyphicon-pencil"></i></button>
-      <button class="btn btn-danger" onclick="destroy(<?php echo $gurus->id;?>)"><i class="glyphicon glyphicon-remove"></i></button>
-    </td>
-  </tr>
-  <?php }?>
-</tbody>
 
-<tfoot>
-  <tr>
-    <th>No</th>
-    <th>NIK guru</th>
-    <th>Nama guru</th>
-    <th>Action</th>
-  </tr>
-</tfoot>
+       <!-- <?php $txt_file =(is_null($guru->foto)) ? 'Belum ada file' : $materi->file_materi ;?> -->
+       <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle btn-sm" type="button" data-toggle="dropdown">Manage
+          <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <?php if(is_null($gurus->foto)){?>
+            <li><a href="#" onclick="uploadFile('<?php echo $gurus->id ;?>','<?php echo $gurus->foto ;?>')">Upload Foto <i class="fa fa-upload"></i></a></li>
+            <?php }else{ ?>
+            <li><a href="#" onclick="uploadFile('<?php echo $gurus->id ;?>','<?php echo $gurus->foto ;?>')">Update Foto <i class="fa fa-edit"></i></a></li>
+            <?php } ?>
+            <li role="separator" class="divider"></li>
+            <li><a href="#" onclick=""> Mengajar Mapel <i class="fa fa-book"></i></a></li>
+          </ul>
+        </div>
+
+      </td>
+      <td>
+        <button class="btn btn-warning btn-sm" onclick="edit(<?php echo $gurus->id;?>)"><i class="fa fa-pencil"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="destroy(<?php echo $gurus->id;?>)"><i class="fa fa-remove"></i></button>
+      </td>
+    </tr>
+    <?php }?>
+  </tbody>
 </table>
 
 <script type="text/javascript">
@@ -50,12 +67,12 @@
       save_method = 'add';
       $('#form')[0].reset(); // reset form on modals
       $('#modal_form').modal('show'); // show bootstrap modal
-    //$('.modal-title').text('Add Person'); // Set Title to Bootstrap modal title
-  }
-  
-  function edit(id)
-  {
-    save_method = 'update';
+      $('.modal-title').html('<i class="fa fa-plus"></i> Tambah Guru'); // Set Title to Bootstrap modal title
+    }
+
+    function edit(id)
+    {
+      save_method = 'update';
       $('#form')[0].reset(); // reset form on modals
       
       //Ajax Load data from ajax
@@ -83,16 +100,17 @@
     
     function save()
     {
+
       var url;
       if(save_method == 'add')
       {
-        url = "<?php echo site_url('index.php/admin/guru_add')?>";
+        url = "<?php echo site_url('admin/guru_add')?>";
       }
       else
       {
-        url = "<?php echo site_url('index.php/admin/guru_update')?>";
+        url = "<?php echo site_url('admin/guru_update')?>";
       }
-      
+
        // ajax adding data to database
        $.ajax({
         url : url,
@@ -101,15 +119,18 @@
         dataType: "JSON",
         success: function(data)
         {
-               //if success close modal and reload ajax table
-               $('#modal_form').modal('hide');
+              //if success close modal and reload ajax table
+              $('#modal_form').modal('hide');
               location.reload();// for reload a page
             },
-            error: function (jqXHR, textStatus, errorThrown)
+            error: function (response,jqXHR, textStatus, errorThrown)
             {
-              alert('Error adding / update data');
-            }
-          });
+              //console.log(response.responseJSON.error);
+               $('.alert-danger span').html(response.responseJSON.error); //add response error
+               $('.alert-danger').show().delay(4000).fadeOut(); //show the alert
+             }
+
+           });
      }
      
      function destroy(id)
@@ -134,6 +155,70 @@
         
       }
     }
+
+
+    //show modal upload file
+    function uploadFile(id,nama_image){
+
+      $('#formUpload')[0].reset(); // reset form on modals
+      $('#modal_file_upload').modal('show'); // show bootstrap modal
+      $('.modal-title').html('<i class="fa fa-upload"></i> Upload Foto'); // Set title to Bootstrap modal title
+      $('[name="id_guru"]').val(id);
+
+      if(nama_image != ''){
+        var src1 = '<?php echo base_url('assets/avatar/')?>' + nama_image;
+      }else{
+        var src1 = '<?php echo base_url('assets/img/NoAvatar.jpg')?>';
+      }
+
+      $("#img-src").attr("src", src1);
+
+
+    }
+
+    //save upload
+    function saveUpload(){
+
+      var id_guru = $('input[name=id_guru]').val()
+      var url;
+
+      url = "<?php echo site_url('admin/guru_file_add/')?>" + id_guru ;
+
+      //hide the submit button
+      $('button[id=btnSaveUpload]').hide();
+      //show the loading gif
+      $('#loadingUpload').show();
+
+      var file_data = $('#file').prop('files')[0];
+      var form_data = new FormData();
+      form_data.append('file', file_data);
+
+       // ajax adding data to database
+       $.ajax({
+        url : url,
+        type: "POST",
+        cache: false,
+        contentType: false,
+        processData: false,
+        data: form_data,
+        dataType: "JSON",
+        success: function(response)
+        {
+            //if success close modal and reload ajax table
+            $('#modal_file_upload').modal('hide');
+              location.reload();// for reload a page
+            },
+            error: function (response,textStatus, jqXHR)
+            {
+            //console.log(response.responseJSON.error);
+            $('.alert-danger').html(response.responseJSON.error); //add response error
+            $('.alert-danger').show().delay(4000).fadeOut(); //show the alert
+            $('button[id=btnSaveUpload]').show(); // show the button submit
+            $('#loadingUpload').hide(); //hide the loading gif
+          }
+        });
+
+     }
     
   </script>
   
@@ -148,6 +233,16 @@
           <h4 class="modal-title">Guru Form</h4>
         </div>
         <div class="modal-body form bg-primary">
+
+          <div class="alert alert-danger" style="display: none;">
+
+            <div class="form-group">
+              <h4 class="alert-heading"><i class="fa fa-warning"></i> Warning</h4>
+              <hr>
+              <span></span>
+            </div>
+          </div>
+
           <form action="#" id="form" class="form-horizontal">
             <input type="hidden" value="" name="id_guru"/>
             <div class="form-body">
@@ -155,43 +250,130 @@
               <div class="form-group">
                 <label class="control-label col-md-3">NIK Guru</label>
                 <div class="col-md-9">
-                  <input name="nik" placeholder="NIK Guru" value="" class="form-control" type="number" id="Nisguru" >
+                  <input name="nik" placeholder="nik guru" value="" class="form-control" type="number" id="Nisguru" >
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-md-3">Nama Guru</label>
                 <div class="col-md-9">
-                  <input name="nama" placeholder="Nama guru" class="form-control" type="text">
+                  <input name="nama" placeholder="nama guru" class="form-control" type="text">
                 </div>
               </div>
+              
               <div class="form-group">
                 <label class="control-label col-md-3">Password Guru</label>
                 <div class="col-md-9">
-                  <input name="pass" placeholder="Password guru" class="form-control" type="password">
+                  <code>* jika password kosong,otomatis password adalah nik</code>
+                  <br>
+                  <br>
+                  <input name="pass" placeholder="password guru" class="form-control" type="password">
                 </div>
               </div>
+
               <div class="form-group">
-                <label class="control-label col-md-3">Mapel</label>
+                <label class="control-label col-md-3">Level</label>
                 <div class="col-md-9">
-                  <code>* ctrl + klik untuk memilih lebih dari satu mapel.</code>
-                  <br>
-                  <br>
-                  <select name="mapel[]" class="form-control" multiple>
-                    <?php foreach($mapel as $row):?>
-                     <option value="<?php echo $row->id_mapel ?>"><?php echo $row->nama_mapel ?></option>
-                   <?php endforeach;?>
-                 </select> 
-               </div>
-             </div>        
-           </div>
-         </form>
-       </div>
-       <div class="modal-footer bg-primary">
-        <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Save</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-<!-- End Bootstrap modal -->
+                  <select name="level" class="form-control">
+                    <option value="guru">Guru</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-md-3">No telp</label>
+                <div class="col-md-9">
+                  <input name="telp" placeholder="no telp" class="form-control" type="text">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-md-3">Email</label>
+                <div class="col-md-9">
+                  <input name="email" placeholder="email" class="form-control" type="text">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-md-3">Alamat</label>
+                <div class="col-md-9">
+                  <textarea class="form-control" name="alamat"></textarea> 
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-md-3">Tgl Lahir</label>
+                <div class="col-md-3">
+                  <input name="tgl" placeholder="11" class="form-control" type="text">
+                </div>
+                <div class="col-md-3">
+                  <input name="bln" placeholder="02" class="form-control" type="text">
+                </div>
+                <div class="col-md-3">
+                  <input name="thn" placeholder="1990" class="form-control" type="text">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-md-3">Jenis Kelamin</label>
+                <div class="col-md-9">
+                  <select name="jenis_kelamin" class="form-control">
+                    <option value="L">Laki-Laki</option>
+                    <option value="P">Perempuan</option>
+                  </select>
+                </div>
+              </div>
+
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer bg-primary">
+          <button type="button" id="btnSave" onclick="save()" class="btn btn-success"><i class="fa fa-save"></i> Save</button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancel</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+  <!-- End Bootstrap modal -->
+
+  <div class="modal fade" id="modal_file_upload" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-primary">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Foto: Upload File </h4>
+        </div>
+        <div class="modal-body form bg-primary">
+
+          <div class="alert alert-danger" style="display: none;"></div>
+          <div class="alert alert-success" style="display: none;"></div>
+
+          <form action="#" id="formUpload" class="form-horizontal" enctype="multipart/form-data">
+            <input type="hidden"  name="id_guru"/>
+            <div class="form-body">
+
+              <center>
+              <img src="" id="img-src" class="img img-responsive img-thumbnail" width="200px" height="auto">
+              </center>
+              
+              <br>
+              
+              <div class="form-group">
+                <label class="col-md-4">File</label>
+                <div class="col-md-8">
+                  <input type="file" name="file" id="file">
+                </div>
+              </div>
+
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer bg-primary">
+          <button type="button" id="btnSaveUpload" onclick="saveUpload()" class="btn btn-success"><i class="fa fa-upload"></i> Save</button>
+          <img id="loadingUpload" src="<?php echo base_url() ?>/assets/img/spinner.gif"" style="display: none;">
+          <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancel</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div>
 

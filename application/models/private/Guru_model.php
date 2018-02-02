@@ -34,6 +34,7 @@ class Guru_model extends CI_Model
     public function get_all_guru()
     {
         $this->db->from('guru');
+        $this->db->order_by('id','desc');
         $query = $this->db->get();
         return $query->result();
     }

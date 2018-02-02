@@ -449,8 +449,6 @@ class Guru extends CI_Controller
                     if (!$this->image_lib->resize()) {
                      echo $this->image_lib->display_errors();
                  }
-
-
              }
 
              $old_image_name    = $this->guru_model->get_select($this->session->userdata('id'), 'foto');
