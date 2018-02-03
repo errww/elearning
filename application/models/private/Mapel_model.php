@@ -14,6 +14,7 @@ class Mapel_model extends CI_Model
     public function get_all_mapel()
     {
         $this->db->from('mapel');
+        $this->db->order_by('id_mapel','desc');
         $query = $this->db->get();
         return $query->result();
     }
@@ -30,7 +31,7 @@ class Mapel_model extends CI_Model
     {
         $this->db->select('*');
         $this->db->from('mapel');
-        $this->db->where('id', $id);
+        $this->db->where('id_mapel', $id);
         $query = $this->db->get();
         return $query->row();
     }
@@ -49,7 +50,7 @@ class Mapel_model extends CI_Model
 
     public function delete_by_id($id)
     {
-        $this->db->where('id', $id);
+        $this->db->where('id_mapel', $id);
         $this->db->delete('mapel');
     }
 

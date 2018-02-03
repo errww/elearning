@@ -14,9 +14,15 @@ class Jammapel_model extends CI_Model
     public function get_all_jammapel()
     {
 
-        $this->db->select('jm.id as idmp,jam_mulai,jam_selesai,nama_hari,nama_kelas,mapel,nama');
+        $this->db->select('jm.id as idmp,
+                            jam_mulai,
+                            jam_selesai,
+                            nama_hari,
+                            nama_kelas,
+                            mp.nama_mapel,
+                            nama');
         $this->db->from('jammapel jm ');
-        $this->db->join('mapel mp', 'jm.mapel_id = mp.id');
+        $this->db->join('mapel mp', 'jm.mapel_id = mp.id_mapel');
         $this->db->join('kelas kl', 'jm.kelas_id = kl.id_kelas');
         $this->db->join('hari hr', 'hr.id_hari = jm.hari_id');
         $this->db->join('guru gr', 'gr.id = jm.guru_id');
@@ -28,9 +34,19 @@ class Jammapel_model extends CI_Model
     public function get_by_id($id)
     {
         
-        $this->db->select('mp.id as idmp,gr.id as grid,id_hari,id_kelas,jam_mulai,jam_selesai,nama_hari,nama_kelas,mapel,nama');
-        $this->db->from('jammapel jm ');
-        $this->db->join('mapel mp', 'jm.mapel_id = mp.id');
+        $this->db->select('jm.id,
+                            mp.id_mapel as idmp,
+                            gr.id as grid,
+                            id_hari,
+                            id_kelas,
+                            jam_mulai,
+                            jam_selesai,
+                            nama_hari,
+                            nama_kelas,
+                            mp.nama_mapel,
+                            nama');
+        $this->db->from('jammapel jm');
+        $this->db->join('mapel mp', 'jm.mapel_id = mp.id_mapel');
         $this->db->join('kelas kl', 'jm.kelas_id = kl.id_kelas');
         $this->db->join('hari hr', 'hr.id_hari = jm.hari_id');
         $this->db->join('guru gr', 'gr.id = jm.guru_id');

@@ -58,12 +58,13 @@ class Admin extends CI_Controller
 
     public function jammapel()
     {
+        $this->cek_session();
 
         $this->load->model('private/mapel_model');
         $this->load->model('private/jammapel_model');
         $this->load->model('private/thajaran_model');
         $this->load->model('private/kelas_model');
-        $this->cek_session();
+
         $data['content'] = 'content/private/jammapel';
 
         $data['kelas']   = $this->kelas_model->get_all_kelas();
@@ -330,8 +331,6 @@ public function admin_add()
 
        }else{
 
-        //$pass   = $this->input->post('pass');
-        //$mapels = $this->input->post('mapel');
 
         $data   = array(
             'nik'      => $this->input->post('nik'),
@@ -353,16 +352,6 @@ public function admin_add()
         }
 
         $insert = $this->guru_model->guru_add($data);
-
-        // if ($mapels > 0) {
-        //     foreach ($mapels as $row) {
-        //         $data2 = array(
-        //             'id_guru'  => $insert,
-        //             'id_mapel' => $row,
-        //             );
-        //         $this->guru_model->guru_mapel_add($data2);
-        //     }
-        // }
 
         echo json_encode(array("status" => true));
 
@@ -471,6 +460,12 @@ echo json_encode(array("status" => true));
         }
     }
 
+    /**
+     * [ajax_guru_edit description]
+     * @author [acil] 
+     * @param  [type] $id [description]
+     * @return [type]     [description]
+     */
     public function ajax_guru_edit($id)
     {
         $this->cek_session();
@@ -478,47 +473,128 @@ echo json_encode(array("status" => true));
         echo json_encode($data);
     }
 
-    public function guru_update()
-    {
-        $this->cek_session();
+    /**
+     * [ajax_guru_mapel description]
+     * @param  [type] $id_guru [description]
+     * @return [type]          [description]
+     */
+    public function ajax_guru_mapel($id_guru){
+
+        $this->db->select('guru_mapel.id_mapel, mapel.nama_mapel ');
+        $this->db->from('guru_mapel');
+        $this->db->join('mapel','guru_mapel.id_mapel=mapel.id_mapel');
+        $this->db->where('guru_mapel.id_guru',$id_guru);
+        $data = $this->db->get()->result();
+
+        echo json_encode($data);
+
+    }
+
+    /**
+     * [guru_mapel_update description]
+     * @return [type] [description]
+     */
+    public function guru_mapel_update(){
+
+        //print_r($this->input->post()); die();
+
+        $id_guru = $this->input->post('id_guru');
+        $id_mapel = $this->input->post('mapel');
+
+        if(isset($id_mapel)){
+            //delete the old data
+            $this->db->where('id_guru',$id_guru);
+            $this->db->delete('guru_mapel');
+
+
+            for($i=0;$i<sizeof($id_mapel);$i++)
+            {
+               $dataSet[$i] = array ('id_guru' => $id_guru, 'id_mapel' => $id_mapel[$i]);
+           }
+
+           $this->db->insert_batch('guru_mapel', $dataSet);
+
+           echo json_encode(array("status" => true));
+
+       }else{
+
+        //delete old data
+        $this->db->where('id_guru',$id_guru);
+        $this->db->delete('guru_mapel');
+
+        echo json_encode(array("status" => true));
+
+    }
+
+}
+
+
+public function guru_update()
+{
+    $this->cek_session();
+
+    $this->form_validation->set_rules('nik', 'nik', 'required|max_length[100]');
+    $this->form_validation->set_rules('nama', 'nama', 'required|max_length[100]');
+    $this->form_validation->set_rules('level', 'Level', 'required');
+    $this->form_validation->set_rules('telp', 'No telp', 'required|numeric');
+    $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+    $this->form_validation->set_rules('alamat', 'Alamat', 'required');
+
+    $this->form_validation->set_rules('tgl', 'Tanggal', 'required|numeric|min_length[2]|max_length[2]');
+    $this->form_validation->set_rules('bln', 'Bulan', 'required|numeric|min_length[2]|max_length[2]');
+    $this->form_validation->set_rules('thn', 'Tahun', 'required|numeric|min_length[4]|max_length[4]');
+
+    $this->form_validation->set_rules('jenis_kelamin', 'Jenis Kelamin', 'required');
+
+    if($this->form_validation->run() == false){
+
+        $this->output
+        ->set_status_header(500)
+        ->set_content_type('application/json')
+        ->set_output(json_encode(array('error' => validation_errors())));
+
+    }else{
+
         $pass   = $this->input->post('pass');
-        $mapels = $this->input->post('mapel');
-        $id = $this->input->post('id_guru');
+
         if (!empty($pass)) {
             $data = array(
-                'nama'     => $this->input->post('nama'),
-                'nik'      => $this->input->post('nik'),
-                'password' => $this->hash_password($this->input->post('pass')),
+                'nama'      => $this->input->post('nama'),
+                'nik'       => $this->input->post('nik'),
+                'level'     => $this->input->post('level'),
+                'telp'      => $this->input->post('telp'),
+                'email'     => $this->input->post('email'),
+                'alamat'    => $this->input->post('alamat'),
+                'tgl_lahir' => $this->input->post('tgl').'-'.$this->input->post('bln').'-'.$this->input->post('thn'),
+                'jenis_kelamin' => $this->input->post('jenis_kelamin'),
+                'password'  => $this->hash_password($this->input->post('pass')),
                 );
         } else {
             $data = array(
-                'nama' => $this->input->post('nama'),
-                'nik'  => $this->input->post('nik'),
+                'nama'      => $this->input->post('nama'),
+                'nik'       => $this->input->post('nik'),
+                'level'     => $this->input->post('level'),
+                'telp'      => $this->input->post('telp'),
+                'email'     => $this->input->post('email'),
+                'alamat'    => $this->input->post('alamat'),
+                'tgl_lahir' => $this->input->post('tgl').'-'.$this->input->post('bln').'-'.$this->input->post('thn'),
+                'jenis_kelamin' => $this->input->post('jenis_kelamin'),
                 );
         }
 
         $this->guru_model->guru_update(array('id' => $this->input->post('id_guru')), $data);
-        $this->guru_model->delete_guru_mapel($id);
-        if ($mapels > 0) {
-            foreach ($mapels as $row) {
-                $data2 = array(
-                    'id_guru'  => $this->input->post('id_guru'),
-                    'id_mapel' => $row,
-                    );
-                $this->guru_model->guru_mapel_add($data2);
-            }
-        }
 
         echo json_encode(array("status" => true));
     }
+}
 
-    public function guru_delete($id)
-    {
-        $this->cek_session();
-        $this->guru_model->delete_guru($id);
-        $this->guru_model->delete_guru_mapel($id);
-        echo json_encode(array("status" => true));
-    }
+public function guru_delete($id)
+{
+    $this->cek_session();
+    $this->guru_model->delete_guru($id);
+    $this->guru_model->delete_guru_mapel($id);
+    echo json_encode(array("status" => true));
+}
 
     /*
     // ---------------------------- Siswa Management Page -------------------------------------------
@@ -725,13 +801,26 @@ echo json_encode(array("status" => true));
 
     public function mapel_add()
     {
-        //$this->cek_session();
-        $this->load->model('private/mapel_model');
-        $data = array(
-            'mapel' => $this->input->post('nama_mapel'),
-            );
-        $insert = $this->mapel_model->mapel_add($data);
-        echo json_encode(array("status" => true));
+        $this->cek_session();
+        $this->form_validation->set_rules('nama_mapel','Nama Mapel','required');
+
+        if($this->form_validation->run() == false){
+
+            $this->output
+            ->set_status_header(500)
+            ->set_content_type('application/json')
+            ->set_output(json_encode(array('error' => validation_errors())));
+
+        }else{
+
+            $this->load->model('private/mapel_model');
+            $data = array(
+                'nama_mapel' => $this->input->post('nama_mapel'),
+                );
+            $this->mapel_model->mapel_add($data);
+
+            echo json_encode(array("status" => true));
+        }
     }
 
     public function ajax_mapel_edit($id)
@@ -742,31 +831,66 @@ echo json_encode(array("status" => true));
         echo json_encode($data);
     }
 
+    /**
+     * [mapel_update description]
+     * @author [acil]
+     * @return [type] [description]
+     */
     public function mapel_update()
     {
         $this->cek_session();
-        $this->load->model('private/mapel_model');
-        $data = array(
-            'mapel' => $this->input->post('nama_mapel'),
-            );
-        $this->mapel_model->mapel_update(array('id' => $this->input->post('id_mapel')), $data);
-        echo json_encode(array("status" => true));
-    }
+        $this->form_validation->set_rules('nama_mapel','Nama Mapel','required');
 
-    public function mapel_delete($id)
-    {
-        $this->cek_session();
-        $this->load->model('private/mapel_model');
-        $this->mapel_model->delete_by_id($id);
-        echo json_encode(array("status" => true));
-    }
+        if($this->form_validation->run() == false){
+
+         $this->output
+         ->set_status_header(500)
+         ->set_content_type('application/json')
+         ->set_output(json_encode(array('error' => validation_errors())));
+
+     }else{
+
+      $this->load->model('private/mapel_model');
+      $data = array(
+        'nama_mapel' => $this->input->post('nama_mapel'),
+        );
+      $this->mapel_model->mapel_update(array('id_mapel' => $this->input->post('id_mapel')), $data);
+      echo json_encode(array("status" => true));
+  }
+
+}
+
+public function mapel_delete($id)
+{
+    $this->cek_session();
+    $this->load->model('private/mapel_model');
+    $this->mapel_model->delete_by_id($id);
+    echo json_encode(array("status" => true));
+}
 
 
 //////////////////////////jam mapel///////////////////////////////////
 
-    public function jammapel_add()
-    {
-        //$this->cek_session();
+public function jammapel_add()
+{
+    $this->cek_session();
+
+    $this->form_validation->set_rules('start','Jam Mulai', 'required');
+    $this->form_validation->set_rules('end','Jam Selesai', 'required');
+    $this->form_validation->set_rules('hari_id','Hari', 'required');
+    $this->form_validation->set_rules('kelas_id','Kelas', 'required');
+    $this->form_validation->set_rules('mapel_id','Mapel', 'required');
+    $this->form_validation->set_rules('guru_id','Guru', 'required');
+
+    if($this->form_validation->run() == false){
+
+        $this->output
+        ->set_status_header(500)
+        ->set_content_type('application/json')
+        ->set_output(json_encode(array('error' => validation_errors())));
+
+    }else{
+
         $this->load->model('private/jammapel_model');
         $data = array(
             'jam_mulai'     => $this->input->post('start'),
@@ -779,15 +903,75 @@ echo json_encode(array("status" => true));
         $insert = $this->jammapel_model->jammapel_add($data);
         echo json_encode(array("status" => true));
     }
+}
 
 
-    public function ajax_jammapel_edit($id)
-    {
-        $this->cek_session();
+public function ajax_jammapel_edit($id)
+{
+    $this->cek_session();
+    $this->load->model('private/jammapel_model');
+    $data = $this->jammapel_model->get_by_id($id);
+    echo json_encode($data);
+}
+
+/**
+ * [jammapel_update description]
+ * @author [acil] <[<email address>]>
+ * @return [type] [description]
+ */
+public function jammapel_update(){
+
+    $this->cek_session();
+
+    $this->form_validation->set_rules('start','Jam Mulai', 'required');
+    $this->form_validation->set_rules('end','Jam Selesai', 'required');
+    $this->form_validation->set_rules('hari_id','Hari', 'required');
+    $this->form_validation->set_rules('kelas_id','Kelas', 'required');
+    $this->form_validation->set_rules('mapel_id','Mapel', 'required');
+    $this->form_validation->set_rules('guru_id','Guru', 'required');
+
+    if($this->form_validation->run() == false){
+
+        $this->output
+        ->set_status_header(500)
+        ->set_content_type('application/json')
+        ->set_output(json_encode(array('error' => validation_errors())));
+
+    }else{
+
         $this->load->model('private/jammapel_model');
-        $data = $this->jammapel_model->get_by_id($id);
-        echo json_encode($data);
+        $data = array(
+            'jam_mulai'     => $this->input->post('start'),
+            'jam_selesai'   => $this->input->post('end'),
+            'hari_id'       => $this->input->post('hari_id'),
+            'kelas_id'      => $this->input->post('kelas_id'),
+            'mapel_id'      => $this->input->post('mapel_id'),
+            'guru_id'       => $this->input->post('guru_id')
+            );
+        
+        $this->db->where('id', $this->input->post('id_jammapel'));
+        $this->db->update('jammapel', $data);
+
+        echo json_encode(array("status" => true));
     }
+
+}
+
+
+/**
+ * [jammapel_delete description]
+ * @author [acil] <[<email address>]>
+ * @param  [type] $id [description]
+ * @return [type]     [description]
+ */
+public function jammapel_delete($id)
+{
+    $this->cek_session();
+    $this->load->model('private/mapel_model');
+    $this->db->delete('jammapel', array('id' => $id));
+    echo json_encode(array("status" => true));
+}
+
 
 
 
