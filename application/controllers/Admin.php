@@ -96,14 +96,21 @@ class Admin extends CI_Controller
     {
         $this->cek_session();
         $seg = $this->uri->segment(3);
+
         $this->load->model('private/kelas_model');
         $this->load->model('private/thajaran_model');
         $data['content'] = 'content/private/siswa';
+        
         if (isset($seg)) {
             $data['siswa'] = $this->siswa_model->get_daftar_siswa($seg);
+            $th = $this->db->select('tahun')->from('tahunajaran')->where('id_tahunajaran',$seg)->get()->row();
+            $data['th'] = $th->tahun;
         } else {
             $data['siswa'] = $this->siswa_model->get_all_siswa();
+            $data['th'] = "Semua";
         }
+
+        
         $data['kelas']    = $this->kelas_model->get_all_kelas();
         $data['thajaran'] = $this->thajaran_model->get_all_thajaran();
         $this->load->view('layout/header/private/header');
@@ -234,10 +241,10 @@ class Admin extends CI_Controller
 
                     //role for level
                     if($res->level == 'guru'){
-                     $url = site_url().'guru';
-                 }
+                       $url = site_url().'guru';
+                   }
 
-                 if($res->level == 'admin'){
+                   if($res->level == 'admin'){
                     $url = site_url().'admin';
                 }
 
@@ -324,12 +331,12 @@ public function admin_add()
 
         if($this->form_validation->run() == false){
 
-           $this->output
-           ->set_status_header(500)
-           ->set_content_type('application/json')
-           ->set_output(json_encode(array('error' => validation_errors())));
+         $this->output
+         ->set_status_header(500)
+         ->set_content_type('application/json')
+         ->set_output(json_encode(array('error' => validation_errors())));
 
-       }else{
+     }else{
 
 
         $data   = array(
@@ -361,18 +368,18 @@ public function admin_add()
 
 public function guru_file_add($id_guru){
 
- $this->cek_session();
+   $this->cek_session();
 
- $this->form_validation->set_rules('file','','callback_image_file_check');
+   $this->form_validation->set_rules('file','','callback_image_file_check');
 
- if($this->form_validation->run() == false){
+   if($this->form_validation->run() == false){
 
-     $this->output
-     ->set_status_header(500)
-     ->set_content_type('application/json')
-     ->set_output(json_encode(array('error' => validation_errors())));
+       $this->output
+       ->set_status_header(500)
+       ->set_content_type('application/json')
+       ->set_output(json_encode(array('error' => validation_errors())));
 
- }else{
+   }else{
 
         //configuration
     $config['upload_path'] = './assets/avatar/';
@@ -406,19 +413,19 @@ public function guru_file_add($id_guru){
 
         if (!$this->image_lib->resize()) {
 
-         $this->output
-         ->set_status_header(500)
-         ->set_content_type('application/json')
-         ->set_output(json_encode(array('error' => $this->image_lib->display_errors() )));
+           $this->output
+           ->set_status_header(500)
+           ->set_content_type('application/json')
+           ->set_output(json_encode(array('error' => $this->image_lib->display_errors() )));
 
-     }
+       }
 
 
     //get old file
-     $old_image_name    = $this->db->get_where('guru', array('id' => $id_guru))->row();
+       $old_image_name    = $this->db->get_where('guru', array('id' => $id_guru))->row();
     //remove
-     $file = $config['upload_path'].$old_image_name->foto;
-     if (file_exists($file)) {
+       $file = $config['upload_path'].$old_image_name->foto;
+       if (file_exists($file)) {
         unlink($file);
     }
 
@@ -509,14 +516,14 @@ echo json_encode(array("status" => true));
 
             for($i=0;$i<sizeof($id_mapel);$i++)
             {
-               $dataSet[$i] = array ('id_guru' => $id_guru, 'id_mapel' => $id_mapel[$i]);
-           }
+             $dataSet[$i] = array ('id_guru' => $id_guru, 'id_mapel' => $id_mapel[$i]);
+         }
 
-           $this->db->insert_batch('guru_mapel', $dataSet);
+         $this->db->insert_batch('guru_mapel', $dataSet);
 
-           echo json_encode(array("status" => true));
+         echo json_encode(array("status" => true));
 
-       }else{
+     }else{
 
         //delete old data
         $this->db->where('id_guru',$id_guru);
@@ -603,28 +610,71 @@ public function guru_delete($id)
     public function siswa_add()
     {
         $this->cek_session();
-        $data = array(
+
+        $this->form_validation->set_rules('nis_siswa', 'Nis', 'required|numeric');
+        $this->form_validation->set_rules('nama_siswa', 'Nama', 'required|max_length[100]');
+        $this->form_validation->set_rules('kelas_siswa', 'Kelas', 'required');
+        $this->form_validation->set_rules('th_siswa', 'Tahun Ajar', 'required');
+
+        if($this->form_validation->run() == false){
+
+
+            $this->output
+            ->set_status_header(500)
+            ->set_content_type('application/json')
+            ->set_output(json_encode(array('error' => validation_errors())));
+
+        }else{
+
+         $data = array(
             'nis_siswa'   => $this->input->post('nis_siswa'),
             'nama_siswa'  => $this->input->post('nama_siswa'),
             'id_kelas'    => $this->input->post('kelas_siswa'),
-            'password'    => $this->hash_password($this->input->post('pass_siswa')),
             'id_thajaran' => $this->input->post('th_siswa'),
             );
+
+         if(!empty($this->input->post('pass_siswa'))){
+
+            $data['password']  = $this->hash_password($this->input->post('pass_siswa'));
+
+        }else{
+
+            $data['password']  = $this->hash_password($this->input->post('nis_siswa'));  
+            
+        }
+
         $insert = $this->siswa_model->siswa_add($data);
+
         echo json_encode(array("status" => true));
     }
+}
 
-    public function ajax_siswa_edit($id)
-    {
-        $this->cek_session();
-        $data = $this->siswa_model->get_by_id($id);
-        echo json_encode($data);
-    }
+public function ajax_siswa_edit($id)
+{
+    $this->cek_session();
+    $data = $this->siswa_model->get_by_id($id);
+    echo json_encode($data);
+}
 
-    public function siswa_update()
-    {
-        $this->cek_session();
-        $pass = $this->input->post('pass');
+public function siswa_update()
+{
+    $this->cek_session();
+
+    $this->form_validation->set_rules('nis_siswa', 'Nis', 'required|numeric');
+    $this->form_validation->set_rules('nama_siswa', 'Nama', 'required|max_length[100]');
+    $this->form_validation->set_rules('kelas_siswa', 'Kelas', 'required');
+    $this->form_validation->set_rules('th_siswa', 'Tahun Ajar', 'required');
+
+    if($this->form_validation->run() == false){
+
+        $this->output
+        ->set_status_header(500)
+        ->set_content_type('application/json')
+        ->set_output(json_encode(array('error' => validation_errors())));
+
+    }else{
+
+        $pass = $this->input->post('pass_siswa');
         if (!empty($pass)) {
             $data = array(
                 'nis_siswa'   => $this->input->post('nis_siswa'),
@@ -633,7 +683,7 @@ public function guru_delete($id)
                 'password'    => $this->hash_password($this->input->post('pass_siswa')),
                 'id_thajaran' => $this->input->post('th_siswa'),
                 );
-            $this->siswa_model->siswa_update(array('id_siswa' => $this->input->post('id_siswa_edit')), $data);
+            $this->siswa_model->siswa_update(array('id_siswa' => $this->input->post('id_siswa')), $data);
             echo json_encode(array("status" => true));
         } else {
             $data = array(
@@ -642,17 +692,19 @@ public function guru_delete($id)
                 'id_kelas'    => $this->input->post('kelas_siswa'),
                 'id_thajaran' => $this->input->post('th_siswa'),
                 );
-            $this->siswa_model->siswa_update(array('id_siswa' => $this->input->post('id_siswa_edit')), $data);
+            $this->siswa_model->siswa_update(array('id_siswa' => $this->input->post('id_siswa')), $data);
             echo json_encode(array("status" => true));
         }
     }
+    
+}
 
-    public function siswa_delete($id)
-    {
-        $this->cek_session();
-        $this->siswa_model->delete_siswa($id);
-        echo json_encode(array("status" => true));
-    }
+public function siswa_delete($id)
+{
+    $this->cek_session();
+    $this->siswa_model->delete_siswa($id);
+    echo json_encode(array("status" => true));
+}
 
     /*
     // ---------------------------- Kelas Management Page -------------------------------------------
@@ -843,25 +895,25 @@ public function guru_delete($id)
 
         if($this->form_validation->run() == false){
 
-         $this->output
-         ->set_status_header(500)
-         ->set_content_type('application/json')
-         ->set_output(json_encode(array('error' => validation_errors())));
+           $this->output
+           ->set_status_header(500)
+           ->set_content_type('application/json')
+           ->set_output(json_encode(array('error' => validation_errors())));
 
-     }else{
+       }else{
 
-      $this->load->model('private/mapel_model');
-      $data = array(
-        'nama_mapel' => $this->input->post('nama_mapel'),
-        );
-      $this->mapel_model->mapel_update(array('id_mapel' => $this->input->post('id_mapel')), $data);
-      echo json_encode(array("status" => true));
+          $this->load->model('private/mapel_model');
+          $data = array(
+            'nama_mapel' => $this->input->post('nama_mapel'),
+            );
+          $this->mapel_model->mapel_update(array('id_mapel' => $this->input->post('id_mapel')), $data);
+          echo json_encode(array("status" => true));
+      }
+
   }
 
-}
-
-public function mapel_delete($id)
-{
+  public function mapel_delete($id)
+  {
     $this->cek_session();
     $this->load->model('private/mapel_model');
     $this->mapel_model->delete_by_id($id);

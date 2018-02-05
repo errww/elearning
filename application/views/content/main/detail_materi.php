@@ -99,10 +99,15 @@
 								<td>:</td>
 								<td>
 									<i class="fa fa-download"></i> 
+									<?php if(is_null($materi->file_materi)){ ?>
+
+									<?php echo '<code>Belum upload file materi</code>' ;?>
+
+									<?php }else{ ?> 
 									<a href="<?php echo site_url('main/download_materi/');?><?php echo $materi->file_materi;?>/<?php echo $materi->id_materi;?>">
 										<?php echo $materi->file_materi ?>
-										
 									</a>
+									<?php } ?>
 								</td>
 							</tr>
 							

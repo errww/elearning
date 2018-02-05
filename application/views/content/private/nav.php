@@ -99,16 +99,13 @@
         </div>
         <div id="collapseThree" class="panel-collapse collapse <?php if ($this->uri->segment(2) =='siswa') { echo 'in'; }?>">
             <div class="panel-body">
-                <ul>
-                    <li><a href="<?php echo base_url('admin/siswa')?>">Semua Data Siswa</a></li>
-                    <?php
-                    foreach($thajaran as $row)
-                        { ?>
-                    <li><a href="<?php echo base_url('admin/siswa/'.$row->id_tahunajaran)?>"><?php echo $row->tahun;?></a></li>
-                    <?php
-                }
-                ?>
-            </ul>
+            <table class="table">
+                <tr>
+                    <td>
+                        <a href="<?php echo base_url('admin/siswa')?>">Semua Data Siswa</a>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 </div>

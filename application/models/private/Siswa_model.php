@@ -16,7 +16,7 @@ class Siswa_model extends CI_Model
         $this->db->select('*');
         $this->db->from('siswa');
         $this->db->join('kelas', 'kelas.id_kelas = siswa.id_kelas');
-        $this->db->join('thajaran', 'thajaran.id = siswa.id_thajaran');
+        $this->db->join('tahunajaran', 'tahunajaran.id_tahunajaran = siswa.id_thajaran');
         $query = $this->db->get();
         return $query->result();
     }
@@ -26,7 +26,7 @@ class Siswa_model extends CI_Model
         $this->db->select('*');
         $this->db->from('siswa');
         $this->db->join('kelas', 'kelas.id_kelas = siswa.id_kelas');
-        $this->db->join('thajaran', 'thajaran.id = siswa.id_thajaran');
+        $this->db->join('tahunajaran', 'tahunajaran.id_tahunajaran = siswa.id_thajaran');
         $this->db->where('siswa.id_thajaran', $seg);
         $query = $this->db->get();
         return $query->result();
@@ -34,11 +34,12 @@ class Siswa_model extends CI_Model
 
     public function get_by_id($id)
     {
-        $this->db->select('*');
+        $this->db->select('siswa.*,kelas.nama_kelas,tahunajaran.tahun');
         $this->db->from('siswa');
+        $this->db->join('kelas','kelas.id_kelas = siswa.id_kelas');
+        $this->db->join('tahunajaran','tahunajaran.id_tahunajaran = siswa.id_thajaran');
         $this->db->where('id_siswa', $id);
         $query = $this->db->get();
-        //echo $this->db->last_query();
         return $query->row();
     }
 

@@ -73,4 +73,27 @@ class Jammapel_model extends CI_Model
         $this->db->delete('mapel');
     }
 
+    public function get_mapel_by_siswa($id_hari,$id_kelas){
+
+        $this->db->select('jammapel.id,
+                            jammapel.jam_mulai,
+                            jammapel.jam_selesai,
+                            hari.nama_hari,
+                            kelas.nama_kelas,
+                            mapel.nama_mapel,
+                            guru.nama
+                        ');
+        $this->db->from('jammapel');
+        $this->db->join('hari','hari.id_hari = jammapel.hari_id');
+        $this->db->join('kelas','kelas.id_kelas = jammapel.kelas_id');
+        $this->db->join('mapel','mapel.id_mapel = jammapel.mapel_id');
+        $this->db->join('guru','guru.id = jammapel.guru_id');
+        $this->db->where('jammapel.hari_id',$id_hari);
+        $this->db->where('jammapel.kelas_id',$id_kelas);
+        $this->db->order_by('HOUR(jammapel.jam_mulai)','asc');
+
+        return $this->db->get()->result();
+
+    }
+
 }

@@ -8,8 +8,36 @@
    <header class="jumbotron my-4">
     <h1 class="display-3">SMA N 1 PAJANGAN</h1>
     <p class="lead">Selamat datang di website E-Learning SMA N 1 PAJANGAN</p>
-    <a href="<?php echo base_url('admin'); ?>" class="btn btn-success btn-xs"><i class="fa fa-user"></i> Login Siswa</a>
-    <a href="<?php echo base_url('admin'); ?>" class="btn btn-success btn-xs"><i class="fa fa-user"></i> Login Admin/Guru</a>
+    <?php if($this->session->userdata('is_login')){ ?>
+
+    <?php if($this->session->userdata('level') == 'siswa'){ ?>
+    <a href="<?php echo base_url('siswa'); ?>" class="btn btn-primary btn-xs">
+      <i class="fa fa-dashboard"></i> 
+      Anda telah login (Manage Siswa) 
+    </a>
+    <?php }?>
+
+    <?php if($this->session->userdata('level') == 'guru'){ ?>
+    <a href="<?php echo base_url('guru'); ?>" class="btn btn-primary btn-xs">
+      <i class="fa fa-dashboard"></i> 
+      Anda telah login (Manage Guru)
+    </a>
+    <?php }?>
+
+    <?php if($this->session->userdata('level') == 'admin'){ ?>
+    <a href="<?php echo base_url('admin'); ?>" class="btn btn-primary btn-xs">
+      <i class="fa fa-dashboard"></i> 
+      Anda telah login (Manage Admin)
+    </a>
+    <?php }?>
+
+
+    
+    <?php } else{ ?>
+
+    <a href="<?php echo base_url('admin'); ?>" class="btn btn-success btn-xs"><i class="fa fa-user"></i> Authentikasi</a>
+
+    <?php } ?>
   </header>
 </div>
 </section>
@@ -36,7 +64,7 @@
         <?php if($this->session->userdata('level') == 'siswa'){?>
         <a href="<?php echo site_url('main/show_informasi/')?><?php echo $info->id ?>" class="btn btn-primary btn-sm">Selengkapnya</a>
         <?php }else{ ?>
-          <code> <i class="fa fa-warning"></i> Siswa wajib login</code>
+        <code> <i class="fa fa-warning"></i> Siswa wajib login</code>
         <?php } ?>
       </div>
     </div>
@@ -83,15 +111,27 @@
     <?php foreach ($nilai as $row) { ?>
     <div class="col-lg-4 mb-4">
       <div class="card h-100">
-        <h4 class="card-header"><?php echo $row->nama; ?></h4>
+        <h4 class="card-header"><i class="fa fa-graduation-cap"></i> <?php echo $row->nama; ?></h4>
         <div class="card-body">
           <p><?php echo $row->title; ?></p>
         </div>
         <div class="card-footer">
           <?php if($this->session->userdata('level') == 'siswa'){?>
+
+          <?php if(is_null($row->file)){ ?>
+
+          <?php echo '<code>Belum upload file nilai</code>'; ?>
+
+          <?php } else { ?>
+
           <a href="<?php echo site_url("main/download_nilai/$row->file"); ?>" class="btn btn-primary btn-sm"><i class="fa fa-download"></i> Download Nilai</a>
+
+          <?php } ?>
+          
           <?php }else{ ?>
+          
           <code> <i class="fa fa-warning"></i> Siswa wajib login.</code>
+          
           <?php }?>
         </div>
       </div>
