@@ -28,6 +28,21 @@ class Main extends CI_Controller
   $this->load->view('layout/footer/main/footer');
 }
 
+public function informasi(){
+
+  $this->cek_session();
+
+  $id_session = $this->session->userdata('id');
+  //get data foto
+  $data['foto_avatar'] = $this->db->select('foto')->where('id_siswa',$id_session)->get('siswa')->row();
+  //get detail informasi
+  $data['informasi'] = $this->main_model->get_inf();
+
+  $this->load->view('layout/header/main/header');
+  $this->load->view('content/main/informasi',$data);
+  $this->load->view('layout/footer/main/footer');
+}
+
 
 public function show_informasi ($id){
 
@@ -40,8 +55,10 @@ public function show_informasi ($id){
     redirect(base_url());
   }
 
+  $id_session = $this->session->userdata('id');
+
   //get data foto
-  $data['foto_avatar'] = $this->db->select('foto')->get('siswa')->row();
+  $data['foto_avatar'] = $this->db->select('foto')->where('id_siswa',$id_session)->get('siswa')->row();
   //get detail informasi
   $data['informasi'] = $this->main_model->get_informasi_by_id($id);
 
@@ -50,6 +67,22 @@ public function show_informasi ($id){
   $this->load->view('layout/header/main/header');
   $this->load->view('content/main/list_informasi',$data);
   $this->load->view('layout/footer/main/footer');
+}
+
+public function materi(){
+
+ $this->cek_session();
+
+ $id_session = $this->session->userdata('id');
+ //get data foto
+ $data['foto_avatar'] = $this->db->select('foto')->where('id_siswa',$id_session)->get('siswa')->row();
+  //get detail materi
+ $data['materi'] = $this->main_model->get_all_mtri();
+
+ $this->load->view('layout/header/main/header');
+ $this->load->view('content/main/materi',$data);
+ $this->load->view('layout/footer/main/footer');
+
 }
 
 
@@ -64,13 +97,29 @@ public function show_materi ($id){
     redirect(base_url());
   }
 
+  $id_session = $this->session->userdata('id');
   //get data foto
-  $data['foto_avatar'] = $this->db->select('foto')->get('siswa')->row();
+  $data['foto_avatar'] = $this->db->select('foto')->where('id_siswa',$id_session)->get('siswa')->row();
   //get detail materi
   $data['materi'] = $this->main_model->get_materi_by_id($id);
 
   $this->load->view('layout/header/main/header');
   $this->load->view('content/main/detail_materi',$data);
+  $this->load->view('layout/footer/main/footer');
+
+}
+
+public function nilai(){
+
+  $this->cek_session();
+  $id_session = $this->session->userdata('id');
+  //get data foto
+  $data['foto_avatar'] = $this->db->select('foto')->where('id_siswa',$id_session)->get('siswa')->row();
+
+  $data['nilai'] = $this->main_model->get_all_nilai(); 
+
+  $this->load->view('layout/header/main/header');
+  $this->load->view('content/main/nilai',$data);
   $this->load->view('layout/footer/main/footer');
 
 }

@@ -15,6 +15,20 @@ class Main_model extends CI_Model
         $this->db->select('*');
         $this->db->from('guru gr');
         $this->db->join('guru_pesan_informasi gpi', 'gr.id = gpi.guru_id');
+        $this->db->limit(4);
+        $this->db->order_by('gr.id','desc');
+       
+        $query = $this->db->get();
+        return $query->result();
+   }
+
+   function get_inf() {
+
+
+        $this->db->select('*');
+        $this->db->from('guru gr');
+        $this->db->join('guru_pesan_informasi gpi', 'gr.id = gpi.guru_id');
+        $this->db->order_by('gr.id','desc');
        
         $query = $this->db->get();
         return $query->result();
@@ -54,9 +68,40 @@ class Main_model extends CI_Model
 
 
       return $this->db->get()->row();
-
-
    }
+
+       public function get_all_mtri (){
+
+      $this->db->select('n.id_materi as idmateri, 
+                          g.nama as nama_guru , 
+                          k.nama_kelas ,
+                          m.nama_mapel, 
+                          n.nama_materi, 
+                          n.file_materi,
+                          n.tgl_upload'
+                          );
+        $this->db->from('materi n');
+        $this->db->join('mapel m', 'n.id_mapel=m.id_mapel');
+        $this->db->join('kelas k', 'n.id_kelas=k.id_kelas');
+        $this->db->join('guru g', 'n.id_guru=g.id');
+        $this->db->order_by('n.id_materi','desc');
+        $query = $this->db->get();
+        return $query->result();
+
+    }
+
+
+    public function get_all_nilai(){
+
+        $this->db->select('n.id_nilai as idnilai, title,nama_kelas,m.nama_mapel,nama,file,tanggal');
+        $this->db->from('nilai n');
+        $this->db->join('mapel m', 'n.id_mapel=m.id_mapel');
+        $this->db->join('kelas k', 'n.id_kelas=k.id_kelas');
+        $this->db->join('guru g', 'n.id_guru=g.id');
+        $this->db->order_by('n.id_nilai','desc');
+        $query = $this->db->get();
+        return $query->result();
+    }
 	 
    
 }?>

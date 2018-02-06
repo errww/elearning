@@ -116,19 +116,19 @@
             <label><small>Lahir</small></label>
             <label><small>Tanggal</small></label>
             <?php echo (form_error('tgl') == '') ? '' : form_error('tgl', '<p class="text-danger">*', '</p>') ; ?>
-            <input type="number" name="tgl" class="form-control"  value="<?php echo $tanggal;?>">
+            <input type="text" name="tgl" class="form-control"  value="<?php echo $tanggal;?>">
           </div>
 
           <div class="col-md-2 ">
             <label><small>Bulan</small></label>
             <?php echo (form_error('bulan') == '') ? '' : form_error('bulan', '<p class="text-danger">*', '</p>') ; ?>
-            <input type="number" name="bulan" class="form-control"  value="<?php echo $bulan;?>">
+            <input type="text" name="bulan" class="form-control"  value="<?php echo $bulan;?>">
           </div>
 
           <div class="col-md-2 ">
             <label><small>Tahun</small></label>
             <?php echo (form_error('tahun') == '') ? '' : form_error('tahun', '<p class="text-danger">*', '</p>') ; ?>
-            <input type="number" name="tahun" class="form-control"  value="<?php echo $tahun;?>">
+            <input type="text" name="tahun" class="form-control"  value="<?php echo $tahun;?>">
           </div>
 
         </div>

@@ -19,7 +19,6 @@
 							<i class="fa fa-user"></i> 
 							login as : <span class="badge badge-pill badge-warning"><?php echo $this->session->userdata('name');?></span></p>
 							<hr>
-							<p class="mb-0"><a href="<?php echo site_url()?>" class="btn btn-info"><i class="fa fa-home"></i> Kembali ke Home</a></p>
 						</center>
 					</div>
 				</div>

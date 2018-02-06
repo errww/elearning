@@ -81,11 +81,13 @@ class Guru_model extends CI_Model
 
     public function get_nilai(){
 
-        $this->db->select('n.id_nilai as idnilai, title,nama_kelas,m.nama_mapel,nama,file');
+        $this->db->select('n.id_nilai as idnilai, title,nama_kelas,m.nama_mapel,nama,file,tanggal');
         $this->db->from('nilai n');
         $this->db->join('mapel m', 'n.id_mapel=m.id_mapel');
         $this->db->join('kelas k', 'n.id_kelas=k.id_kelas');
         $this->db->join('guru g', 'n.id_guru=g.id');
+        $this->db->limit(4);
+        $this->db->order_by('n.id_nilai','desc');
         $query = $this->db->get();
         return $query->result();
     }
@@ -125,12 +127,15 @@ class Guru_model extends CI_Model
                           k.nama_kelas ,
                           m.nama_mapel, 
                           n.nama_materi, 
-                          n.file_materi'
+                          n.file_materi,
+                          n.tgl_upload'
                           );
         $this->db->from('materi n');
         $this->db->join('mapel m', 'n.id_mapel=m.id_mapel');
         $this->db->join('kelas k', 'n.id_kelas=k.id_kelas');
         $this->db->join('guru g', 'n.id_guru=g.id');
+        $this->db->limit(4);
+        $this->db->order_by('n.id_materi','desc');
         $query = $this->db->get();
         return $query->result();
     }
