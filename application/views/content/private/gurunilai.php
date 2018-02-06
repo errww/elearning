@@ -66,11 +66,11 @@
    <div class="modal fade" id="modal_form" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header bg-primary">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h3 class="modal-title">Nilai </h3>
         </div>
-        <div class="modal-body form">
+        <div class="modal-body form bg-primary">
 
           <div class="alert alert-danger" style="display: none;"></div>
           <div class="alert alert-success" style="display: none;"></div>
@@ -133,9 +133,9 @@
             </div>
           </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" id="btnSave" onclick="save()" class="btn btn-primary">Save</button>
-          <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+        <div class="modal-footer bg-primary">
+          <button type="button" id="btnSave" onclick="save()" class="btn btn-success"><i class="fa fa-save"></i> Save</button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-close"></i> Cancel</button>
           <img id="loadingAdmin" src="<?php echo base_url() ?>/assets/img/spinner.gif"" style="display: none;">
         </div>
       </div><!-- /.modal-content -->
@@ -147,11 +147,11 @@
 <div class="modal fade" id="modal_file_upload" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header bg-primary">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h3 class="modal-title">Nilai: Upload File </h3>
       </div>
-      <div class="modal-body form">
+      <div class="modal-body form bg-primary">
 
         <div class="alert alert-danger" style="display: none;"></div>
         <div class="alert alert-success" style="display: none;"></div>
@@ -170,9 +170,9 @@
           </div>
         </form>
       </div>
-      <div class="modal-footer">
-        <button type="button" id="btnSaveUpload" onclick="saveUpload()" class="btn btn-primary">Save</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+      <div class="modal-footer bg-primary">
+        <button type="button" id="btnSaveUpload" onclick="saveUpload()" class="btn btn-success"><i class="fa fa-save"></i> Save</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-cancel"></i> Cancel</button>
         <img id="loadingUpload" src="<?php echo base_url() ?>/assets/img/spinner.gif"" style="display: none;">
       </div>
     </div><!-- /.modal-content -->
@@ -194,7 +194,7 @@
       save_method = 'add';
       $('#form')[0].reset(); // reset form on modals
       $('#modal_form').modal('show'); // show bootstrap modal
-    //$('.modal-title').text('Add Person'); // Set Title to Bootstrap modal title
+      $('.modal-title').html('<i class="fa fa-plus-square"></i> Add Nilai'); // Set Title to Bootstrap modal title
   }
 
   function edit(id)
@@ -217,7 +217,7 @@
           $('[name="kelas"]').val(data.id_kelas);
 
           $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
-          $('.modal-title').text('Edit Nilai'); // Set title to Bootstrap modal title
+          $('.modal-title').html('<i class="fa fa-edit"></i> Edit Nilai'); // Set title to Bootstrap modal title
 
         },
         error: function (jqXHR, textStatus, errorThrown)
@@ -310,6 +310,7 @@
       $('#formUpload')[0].reset(); // reset form on modals
       $('#modal_file_upload').modal('show'); // show bootstrap modal
       $('[name="id_nilai"]').val(id);
+      $('.modal-title').html('<i class="fa fa-edit"></i> Edit'); // Set Title to Bootstrap modal title
 
     }
 
