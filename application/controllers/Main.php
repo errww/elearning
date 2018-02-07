@@ -124,6 +124,115 @@ public function nilai(){
 
 }
 
+public function guru(){
+
+  $this->cek_session();
+
+  $data['guru'] = $this->db->get('guru')->result();
+
+  $this->load->view('layout/header/main/header');
+  $this->load->view('content/main/guru',$data);
+  $this->load->view('layout/footer/main/footer');
+
+}
+
+public function guru_informasi($id_guru){
+
+  $this->cek_session();
+
+  $data['guru']  = $this->db->select('*')->from('guru')->where('id',$id_guru)->get()->row();
+
+  if(is_null($id_guru) || empty($data['guru'])){
+
+    redirect('main/guru');
+  }
+
+  $data['informasi'] = $this->db->select('gpi.*, g.nama')
+  ->from('guru_pesan_informasi gpi')
+  ->join('guru g','gpi.guru_id = g.id')
+  ->where('guru_id',$id_guru)
+  ->order_by('id','desc')->get()->result();
+
+  $this->load->view('layout/header/main/header');
+  $this->load->view('content/main/guru_informasi',$data);
+  $this->load->view('layout/footer/main/footer');
+
+}
+
+public function guru_materi($id_guru){
+
+  $this->cek_session();
+
+  $data['guru']  = $this->db->select('*')->from('guru')->where('id',$id_guru)->get()->row();
+
+  if(is_null($id_guru) || empty($data['guru'])){
+
+    redirect('main/guru');
+  }
+
+  $data['materi'] = $this->db->select('mt.*, g.nama as nama_guru')
+  ->from('materi mt')
+  ->join('guru g','mt.id_guru = g.id')
+  ->where('mt.id_guru',$id_guru)
+  ->order_by('mt.id_materi','desc')->get()->result();
+
+  $this->load->view('layout/header/main/header');
+  $this->load->view('content/main/guru_materi',$data);
+  $this->load->view('layout/footer/main/footer');
+
+}
+
+public function guru_nilai($id_guru){
+
+  $this->cek_session();
+
+  $data['guru']  = $this->db->select('*')->from('guru')->where('id',$id_guru)->get()->row();
+
+  if(is_null($id_guru) || empty($data['guru'])){
+
+    redirect('main/guru');
+  }
+
+  $data['nilai'] = $this->db->select('n.*, g.nama')
+  ->from('nilai n')
+  ->join('guru g','n.id_guru = g.id')
+  ->where('n.id_guru',$id_guru)
+  ->order_by('n.id_nilai','desc')->get()->result();
+
+  $this->load->view('layout/header/main/header');
+  $this->load->view('content/main/guru_nilai',$data);
+  $this->load->view('layout/footer/main/footer');
+
+
+}
+
+public function guru_jadwal($id_guru){
+
+  $this->cek_session();
+
+  $data['guru']  = $this->db->select('*')->from('guru')->where('id',$id_guru)->get()->row();
+
+  if(is_null($id_guru) || empty($data['guru'])){
+
+    redirect('main/guru');
+  }
+
+  $data['jadwal'] = $this->db->select('jmpl.*, g.nama, mpl.nama_mapel, k.nama_kelas, h.nama_hari')
+  ->from('jammapel jmpl')
+  ->join('guru g','jmpl.guru_id = g.id')
+  ->join('mapel mpl','jmpl.mapel_id = mpl.id_mapel')
+  ->join('kelas k','jmpl.kelas_id = k.id_kelas')
+  ->join('hari h','jmpl.hari_id = h.id_hari')
+  ->where('jmpl.guru_id',$id_guru)
+  ->order_by('jmpl.id','desc')->get()->result();
+
+  $this->load->view('layout/header/main/header');
+  $this->load->view('content/main/guru_jadwal',$data);
+  $this->load->view('layout/footer/main/footer');
+
+
+}
+
 public function download_materi($file,$id){
 
   $this->cek_session();

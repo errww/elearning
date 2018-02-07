@@ -251,7 +251,8 @@ class Guru extends CI_Controller
 
             //upload configuration
             $config['upload_path']   = './assets/file_nilai/';
-            $config['allowed_types'] = 'xls|xlsx|pdf';
+            //$config['allowed_types'] = 'xls|xlsx|pdf';
+            $config['allowed_types'] = '*';
             $config['max_size']      = '2048';
             $config['encrypt_name'] = TRUE;
             $this->load->library('upload', $config);
@@ -295,13 +296,23 @@ class Guru extends CI_Controller
 
         if(isset($_FILES['file']['name']) && $_FILES['file']['name']!=""){
 
-            $allowed_mime_type_arr = array('application/pdf','application/xls','application/xlsx');
+            $allowed_mime_type_arr = array('application/pdf','
+                                            application/zip',
+                                            'application/x-zip',
+                                            'application/x-zip-compressed',
+                                            'application/vnd.ms-excel', //xls
+                                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', //xlsx
+                                            'application/vnd.ms-powerpoint', //ppt
+                                            'application/vnd.openxmlformats-officedocument.presentationml.presentation', //pptx
+                                            'application/msword', //doc
+                                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' //docx
+                                            );
             $mime = get_mime_by_extension($_FILES['file']['name']);
 
             if(in_array($mime, $allowed_mime_type_arr)){
                 return true;
             }else{
-                $this->form_validation->set_message('file_check', 'Please select only pdf/xls/xlsx file.');
+                $this->form_validation->set_message('file_check', 'Please select only pdf/xls/xlsx/zip/ppt/pptx/docx file.');
                 return false;
             }
         }else{
@@ -722,7 +733,8 @@ private function hash_password($password)
 
             //upload configuration
             $config['upload_path']   = './assets/file_materi/';
-            $config['allowed_types'] = 'xls|xlsx|pdf';
+            //$config['allowed_types'] = 'xls|xlsx|pdf|zip|rar|ppt|pptx|doc|docx';
+            $config['allowed_types'] = '*';
             $config['max_size']      = '2048';
             $config['encrypt_name'] = TRUE;
             $this->load->library('upload', $config);

@@ -67,6 +67,16 @@
 						<a class="nav-link" href="<?= site_url('main/nilai');?>"><i class="fa fa-bar-chart-o"></i> Nilai</a>
 					</li>
 
+					<?php 
+					$active = '';
+					if($this->uri->segment(2) == 'guru'){
+						$active = 'active';
+					}
+					?>
+					<li class="nav-item <?= $active ?>">
+						<a class="nav-link" href="<?= site_url('main/guru');?>"><i class="fa fa-graduation-cap"></i> Guru</a>
+					</li>
+
 					<?php } ?>
 
 

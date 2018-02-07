@@ -209,3 +209,24 @@ header.masthead h1 {
 .breadcrumb-arrow li span {
     color: #434a54
 }
+
+
+/*************** Team Section ************/
+.padding80 {padding:80px;}
+.sec-title h2 {font-size:36px;font-weight:600;}
+.sec-title h3 {font-size:18px; margin-bottom:30px;}
+.sec-title h3:after {
+    content: '';
+    position: absolute;
+    width: 20%;
+    height: 2px;
+    background: #ea6c56 ;
+    left: 40%;
+    bottom: 60px;
+}
+.team-box {border: 1px solid #e5e5e5; padding:10px;}
+.team-box:hover {border: 1px solid #1D809F ;}
+.team-img img {border: 1px solid #e0e0e0;}
+.team-title h3 {font-size:24px;font-weight:700;color:#1D809F ;}
+.team-title h4 {font-size:16px; font-weight:600; color:#E15337 ;}
+.team-title p {line-height:22px;}

@@ -8,7 +8,7 @@
 				<h2 class="my-4 txt-color-goldenrod"><i class="fa fa-newspaper-o"></i> <small>NILAI</small></h2>
 			</div>
 
-			<div class="col-md-4">
+			<!-- <div class="col-md-4">
 				<div class="alert alert-default" role="alert">
 					<center>
 						<p><strong>Profil Anda</strong></p>
@@ -22,9 +22,9 @@
 							
 						</center>
 					</div>
-				</div>
+				</div> -->
 
-				<div class="col-md-8">
+				<div class="col-md-12">
 					<div class="row">
 						<div class="container">
 							<ol class="breadcrumb breadcrumb-arrow">
@@ -33,7 +33,7 @@
 							</ol>
 						</div>
 						<?php foreach ($nilai as $row) { ?>
-						<div class="col-lg-4 col-md-6 mb-4">
+						<div class="col-lg-3 col-md-6 mb-4">
 							<div class="card">
 								<img class="card-img-top" src="<?= base_url('assets/img/yellowcd.png')?>" alt="">
 								<div class="card-body">
