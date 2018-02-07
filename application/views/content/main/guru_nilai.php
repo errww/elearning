@@ -5,7 +5,7 @@
 		<div class="row">
 
 			<div class="col-lg-12">
-				<h2 class="my-4 txt-color-goldenrod"><i class="fa fa-newspaper-o"></i> <small>Guru Materi</small></h2>
+				<h2 class="my-4 txt-color-goldenrod"><i class="fa fa-newspaper-o"></i> <small>Guru Nilai</small></h2>
 			</div>
 
 			<div class="col-md-4">
