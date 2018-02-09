@@ -190,7 +190,7 @@
   <div class="col-md-12 col-lg-8 col-xl-7 mx-auto">
     <center>
       <?php if($this->session->userdata('level') == 'siswa'){?>
-      <a href="<?= site_url('main/materi')?>" class="btn btn-sm btn-warning outline">
+      <a href="<?= site_url('main/nilai')?>" class="btn btn-sm btn-warning outline">
         <i class="fa fa-chevron-right"></i> NILAI SELENGKAPNYA
       </a>
       <?php }else{ ?>
